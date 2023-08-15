@@ -35,8 +35,9 @@
             android:name=".views.activities.SplashActivity"
             android:exported="false" />
         <activity
-            android:name=".views.activities.MainActivity"
-            android:exported="false" />
+            android:name=".views.activities.main.MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CustomerApp.NavTheme"/>
     </application>
 
 </manifest>
