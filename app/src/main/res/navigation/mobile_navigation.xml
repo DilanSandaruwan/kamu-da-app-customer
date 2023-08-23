@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/foodHouseFragment2">
+    app:startDestination="@id/createOrderFragment">
     <fragment
         android:id="@+id/foodHouseFragment2"
         android:name="com.dilan.kamuda.customerapp.views.fragments.foodhouse.FoodHouseFragment"
@@ -13,4 +13,9 @@
         android:id="@+id/viewOrderFragment2"
         android:name="com.dilan.kamuda.customerapp.views.fragments.order.ViewOrderFragment"
         android:label="My Order" />
+    <fragment
+        android:id="@+id/createOrderFragment"
+        android:name="com.dilan.kamuda.customerapp.views.fragments.order.CreateOrderFragment"
+        android:label="fragment_create_order"
+        tools:layout="@layout/fragment_create_order" />
 </navigation>

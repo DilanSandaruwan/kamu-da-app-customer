@@ -15,16 +15,20 @@
         tools:targetApi="31">
         <activity
             android:name=".views.activities.PinActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.activities.CustomerRegisterActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.activities.EmailVerificationActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.activities.LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,11 +37,13 @@
         </activity>
         <activity
             android:name=".views.activities.SplashActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.activities.main.MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.CustomerApp.NavTheme"/>
+            android:theme="@style/Theme.CustomerApp.NoActionBar"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
