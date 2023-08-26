@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".KamuDaCustomerApp"
         android:allowBackup="true"
@@ -16,15 +17,15 @@
         <activity
             android:name=".views.activities.PinActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.activities.CustomerRegisterActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.activities.EmailVerificationActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.activities.LoginActivity"
             android:exported="true"
@@ -38,12 +39,12 @@
         <activity
             android:name=".views.activities.SplashActivity"
             android:exported="false"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".views.activities.main.MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.CustomerApp.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.CustomerApp.NoActionBar" />
     </application>
 
 </manifest>

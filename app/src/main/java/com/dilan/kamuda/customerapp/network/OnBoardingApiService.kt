@@ -1,9 +1,13 @@
 package com.dilan.kamuda.customerapp.network
 
 import com.dilan.kamuda.customerapp.constant.NetworkConstant
+import com.dilan.kamuda.customerapp.model.foodhouse.FoodHouse
+import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.specific.KamuDaResponseObject
 import retrofit2.Response
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface OnBoardingApiService {
 
