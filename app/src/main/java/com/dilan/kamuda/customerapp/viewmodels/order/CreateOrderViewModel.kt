@@ -27,6 +27,10 @@ class CreateOrderViewModel @Inject constructor(
         }
     }
 
+    private fun placeOrder(){
+
+    }
+
     init {
         getMenuListForMeal("breakfast")
     }

@@ -8,7 +8,7 @@ data class FoodHouse(
     @SerializedName("address") val address: String,
     @SerializedName("hotline") val hotline: String,
     @SerializedName("meal") val meal: String,
-    @SerializedName("menu") val menu: ArrayList<FoodMenu>,
+    @SerializedName("menu") val menu: List<FoodMenu>,
     @SerializedName("time_out_at") val timeOutAt: String,
     @SerializedName("time_start_at") val timeStartAt: String,
     @SerializedName("ready_at") val readyAt: String,

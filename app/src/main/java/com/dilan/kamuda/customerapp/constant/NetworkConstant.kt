@@ -13,4 +13,6 @@ object NetworkConstant {
     const val ENDPOINT_2FA = "2fa"
     const val ENDPOINT_VERIFY_OTP = "verify/otp"
     const val ENDPOINT_MENU = "menu"
+    const val ENDPOINT_ORDERS = "order"
+
 }
