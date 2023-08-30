@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.views.fragments.order
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ import com.dilan.kamuda.customerapp.views.adapters.CreateOrderAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CreateOrderFragment : Fragment() {
+class CreateOrderFragment : Fragment(),CreateOrderAdapter.CheckedItemListener {
 
     private lateinit var viewModel: CreateOrderViewModel
     private lateinit var binding: FragmentCreateOrderBinding
@@ -50,7 +51,7 @@ class CreateOrderFragment : Fragment() {
             override fun itemClick(item: FoodMenu) {
 
             }
-        })
+        },this)
 
         binding.rvMakeOrderItem.also {
             it.layoutManager = _layoutManager
@@ -58,10 +59,37 @@ class CreateOrderFragment : Fragment() {
             it.adapter = adapter
         }
 
+        binding.btnPlaceOrder.setOnClickListener {
+            val checkedItems = adapter.getCheckedItemsList()
+            for (i in checkedItems){
+
+            }
+        }
+
         viewModel.menuList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
 
+        viewModel.checkedItems.observe(viewLifecycleOwner){
+            adapter.setCheckedItems(it)
+        }
+
+        viewModel.emptyOrder.observe(viewLifecycleOwner){
+            binding.btnPlaceOrder.isEnabled = !it
+        }
+
+    }
+
+    override fun onItemChecked(item: FoodMenu, isChecked: Boolean) {
+        val updatedCheckedItems = viewModel.checkedItems.value?.toMutableList() ?: mutableListOf()
+        if (isChecked) {
+            if (!updatedCheckedItems.contains(item)) {
+                updatedCheckedItems.add(item)
+            }
+        } else {
+            updatedCheckedItems.remove(item)
+        }
+        viewModel.setCheckedItemsList(updatedCheckedItems)
     }
 
 }

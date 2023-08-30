@@ -152,7 +152,8 @@
             android:layout_above="@+id/tvTotal"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text="@string/place_order" />
+            android:text="@string/place_order"
+            android:enabled="false"/>
 
         <TextView
             android:id="@+id/tvTotal"

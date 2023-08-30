@@ -20,6 +20,14 @@ class CreateOrderViewModel @Inject constructor(
     val menuList: LiveData<List<FoodMenu>>
         get() = _menuList
 
+    private val _checkedItems = MutableLiveData<List<FoodMenu>>()
+    val checkedItems: LiveData<List<FoodMenu>>
+        get() = _checkedItems
+
+    private val _emptyOrder = MutableLiveData<Boolean>(true)
+    val emptyOrder: LiveData<Boolean>
+        get() = _emptyOrder
+
     private fun getMenuListForMeal(meal: String) {
         viewModelScope.launch {
             _menuList.value =
@@ -27,7 +35,12 @@ class CreateOrderViewModel @Inject constructor(
         }
     }
 
-    private fun placeOrder(){
+    fun setCheckedItemsList(updatedCheckedItems: MutableList<FoodMenu>) {
+        _emptyOrder.value = updatedCheckedItems.size < 1
+        _checkedItems.value = updatedCheckedItems
+    }
+
+    private fun placeOrder() {
 
     }
 
