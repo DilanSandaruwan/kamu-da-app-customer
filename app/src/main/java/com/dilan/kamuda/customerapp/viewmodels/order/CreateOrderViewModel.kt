@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
+import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -41,6 +42,10 @@ class CreateOrderViewModel @Inject constructor(
     }
 
     private fun placeOrder() {
+
+    }
+
+    fun saveData(myOrder: OrderDetail) {
 
     }
 

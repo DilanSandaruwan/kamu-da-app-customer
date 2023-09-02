@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.model.foodhouse
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class FoodMenu(
     @SerializedName("id") val id: String,
@@ -8,4 +9,4 @@ data class FoodMenu(
     @SerializedName("price") val price: Double,
     @SerializedName("status") val status: Boolean,
     var itemCount: Int = 0,
-)
+) : Serializable
