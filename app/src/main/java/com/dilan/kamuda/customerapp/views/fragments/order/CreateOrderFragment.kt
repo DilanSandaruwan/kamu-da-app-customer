@@ -109,10 +109,10 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener {
         }
         val list = mutableList
         val myOrder = OrderDetail(
-            0,
+            -1,
             Date().toString(),
-            "BREAKFAST",
-            "PENDING",
+            "breakfast",
+            "pending",
             checkedItems.sumOf { it.price * it.itemCount }.toDouble(),
             list,
         )

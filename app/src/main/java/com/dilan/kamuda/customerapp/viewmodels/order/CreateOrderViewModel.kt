@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.viewmodels.order
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -46,7 +47,10 @@ class CreateOrderViewModel @Inject constructor(
     }
 
     fun saveData(myOrder: OrderDetail) {
-
+        Log.d("Orders", "saveData: $myOrder")
+//        viewModelScope.launch {
+//            mainRepository.placeOrderInDataSource(myOrder)
+//        }
     }
 
     init {

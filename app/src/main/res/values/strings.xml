@@ -8,4 +8,5 @@
     <string name="date_for_order">2023-08-23</string>
     <string name="meal_name">Breakfast</string>
     <string name="place_order">Place Order</string>
+    <string name="check_out">Check Out</string>
 </resources>

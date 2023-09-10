@@ -138,7 +138,8 @@
             android:id="@+id/rvViewOrderDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/btnPlaceOrder"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="50dp"
             android:layout_below="@+id/titleFoodHouse"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
@@ -151,7 +152,8 @@
             android:layout_height="wrap_content"
             android:text="No orders yet."
             android:gravity="center"
-            android:layout_above="@+id/btnPlaceOrder"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="50dp"
             android:layout_below="@+id/titleFoodHouse"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
@@ -159,27 +161,6 @@
             android:textSize="20sp"
             android:visibility="visible"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPlaceOrder"
-            android:layout_width="220dp"
-            android:layout_height="48dp"
-            android:layout_above="@+id/tvTotal"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="@string/place_order"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/tvTotal"
-            android:layout_width="220dp"
-            android:layout_height="48dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="30dp"
-            android:gravity="center"
-            android:text="0.00"
-            android:textSize="18sp" />
 
     </RelativeLayout>
 </layout>

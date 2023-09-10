@@ -14,6 +14,8 @@ object NetworkConstant {
     const val ENDPOINT_VERIFY_OTP = "verify/otp"
     const val ENDPOINT_MENU = "menu"
     const val ENDPOINT_ORDERS = "order"
+    const val ENDPOINT_SAVE_ORDER = "food_house/order/add"
+
 //    const val ENDPOINT_MENU = "food_house/menu"
 //    const val ENDPOINT_MEAL = "food_house/meal"
 //    const val ENDPOINT_ORDERS = "orders/meal=breakfast/id="

@@ -40,4 +40,19 @@ class MainRepository @Inject constructor(
         }
         return emptyList()
     }
+
+    suspend fun placeOrderInDataSource(myOrder: OrderDetail) : Boolean{
+        return withContext(Dispatchers.IO){
+            return@withContext placeOrderInRemoteService(myOrder)
+        }
+    }
+
+    private suspend fun placeOrderInRemoteService(myOrder: OrderDetail):Boolean{
+        val response = orderApiService.placeOrderInStore(myOrder)
+        if(response.isSuccessful){
+            return response.body() == true
+        }
+        return false
+    }
+
 }
