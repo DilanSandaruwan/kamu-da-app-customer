@@ -1,5 +1,9 @@
 package com.dilan.kamuda.customerapp.di
 
+import com.dilan.kamuda.customerapp.constant.NetworkConstant.BASE_URL
+import com.dilan.kamuda.customerapp.network.OnBoardingApiService
+import com.dilan.kamuda.customerapp.network.OrderApiService
+import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,6 +17,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+
+    @Singleton
+    @Provides
+    fun provideBaseUrl(): String {
+        return BASE_URL
+    }
 
     /**
      * Provides the converter factory for JSON parsing.
@@ -53,6 +63,23 @@ object NetworkModule {
             .client((okHttpClient))
 
         return retrofit.build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideOnBoardingApiService(retrofit: Retrofit): OnBoardingApiService {
+        return retrofit.create(OnBoardingApiService::class.java)
+    }
+    @Singleton
+    @Provides
+    fun provideOrderApiService(retrofit: Retrofit): OrderApiService {
+        return retrofit.create(OrderApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMainRepository(onBoardingApiService: OnBoardingApiService,orderApiService: OrderApiService): MainRepository {
+        return MainRepository(onBoardingApiService,orderApiService)
     }
 
 }
