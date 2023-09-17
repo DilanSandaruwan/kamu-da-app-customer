@@ -38,7 +38,7 @@ class ViewAllOrdersAdapter(
         val diff_util = object : DiffUtil.ItemCallback<OrderDetail>() {
 
             override fun areItemsTheSame(oldItem: OrderDetail, newItem: OrderDetail): Boolean {
-                return oldItem.orderId == newItem.orderId
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(
@@ -59,7 +59,7 @@ class ViewAllOrdersAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.orderId.text = item.orderId.toString()
+        holder.orderId.text = item.id.toString()
         holder.orderTotal.text = item.total.toString()
         // Set up child RecyclerView
         val childAdapter = ViewOrderedItemsAdapter()

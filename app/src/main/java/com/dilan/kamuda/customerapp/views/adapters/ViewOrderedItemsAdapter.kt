@@ -10,7 +10,8 @@ import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.google.android.material.textview.MaterialTextView
 
-class ViewOrderedItemsAdapter() : ListAdapter<OrderItem, ViewOrderedItemsAdapter.ViewHolder>(diff_utils) {
+class ViewOrderedItemsAdapter() :
+    ListAdapter<OrderItem, ViewOrderedItemsAdapter.ViewHolder>(diff_utils) {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val orderedItemName: MaterialTextView = view.findViewById(R.id.mtvOrderedItemName)
@@ -23,7 +24,7 @@ class ViewOrderedItemsAdapter() : ListAdapter<OrderItem, ViewOrderedItemsAdapter
         val diff_utils = object : DiffUtil.ItemCallback<OrderItem>() {
 
             override fun areItemsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.name == newItem.name
             }
 
             override fun areContentsTheSame(

@@ -1,5 +1,6 @@
 package com.dilan.kamuda.customerapp.repository
 
+import android.util.Log
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.network.OnBoardingApiService
@@ -12,16 +13,16 @@ class MainRepository @Inject constructor(
     private val onBoardingApiService: OnBoardingApiService,
     private val orderApiService: OrderApiService,
 ) {
-
+    private val TAG = "MainRepository"
     suspend fun getMenuListForMealFromDataSource(): List<FoodMenu>? {
         return withContext(Dispatchers.IO) {
             return@withContext getResponseFromRemoteService()
         }
     }
 
-    suspend fun getOrderListFromDataSource(): List<OrderDetail>? {
+    suspend fun getOrderListFromDataSource(id: Int): List<OrderDetail>? {
         return withContext(Dispatchers.IO) {
-            return@withContext getOrderListResponseFromRemoteService()
+            return@withContext getOrderListResponseFromRemoteService(id)
         }
     }
 
@@ -33,26 +34,36 @@ class MainRepository @Inject constructor(
         return emptyList()
     }
 
-    private suspend fun getOrderListResponseFromRemoteService(): List<OrderDetail>? {
-        val response = orderApiService.getOrdersList()
-        if (response.isSuccessful) {
-            return response.body()
+    private suspend fun getOrderListResponseFromRemoteService(id: Int): List<OrderDetail>? {
+        try {
+            val response = orderApiService.getOrdersList(id)
+            if (response.isSuccessful) {
+                Log.e(TAG, "getOrderListResponseFromRemoteService: ${response.body()}", )
+                return response.body()
+            }
+            return emptyList()
+        } catch (e: Exception) {
+            Log.e(TAG, "getOrderListResponseFromRemoteService: ${e.message}")
+            return emptyList()
         }
-        return emptyList()
+
     }
 
-    suspend fun placeOrderInDataSource(myOrder: OrderDetail) : Boolean{
-        return withContext(Dispatchers.IO){
+    suspend fun placeOrderInDataSource(myOrder: OrderDetail): OrderDetail? {
+        return withContext(Dispatchers.IO) {
             return@withContext placeOrderInRemoteService(myOrder)
         }
     }
 
-    private suspend fun placeOrderInRemoteService(myOrder: OrderDetail):Boolean{
+    private suspend fun placeOrderInRemoteService(myOrder: OrderDetail): OrderDetail? {
         val response = orderApiService.placeOrderInStore(myOrder)
-        if(response.isSuccessful){
-            return response.body() == true
+        if (response.isSuccessful) {
+            Log.e(TAG, "placeOrderInRemoteService: success: ${response.body()}", )
+            return response.body()
+//            return response.body()
         }
-        return false
+        Log.e(TAG, "placeOrderInRemoteService: failure: ${response.body()}", )
+        return null
     }
 
 }

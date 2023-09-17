@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,26 +19,54 @@ class CreateOrderViewModel @Inject constructor(
     private val mainRepository: MainRepository,
     application: Application
 ) : AndroidViewModel(application) {
-    private val _menuList = MutableLiveData<List<FoodMenu>>()
-    val menuList: LiveData<List<FoodMenu>>
+
+    private val _menuList = MutableLiveData<List<OrderItem>>()
+    val menuList: LiveData<List<OrderItem>>
         get() = _menuList
 
-    private val _checkedItems = MutableLiveData<List<FoodMenu>>()
-    val checkedItems: LiveData<List<FoodMenu>>
+    private val _checkedItems = MutableLiveData<List<OrderItem>>()
+    val checkedItems: LiveData<List<OrderItem>>
         get() = _checkedItems
 
     private val _emptyOrder = MutableLiveData<Boolean>(true)
     val emptyOrder: LiveData<Boolean>
         get() = _emptyOrder
 
-    private fun getMenuListForMeal(meal: String) {
+    private val _totalAmount = MutableLiveData<Boolean>(false)
+    val totalAmount: LiveData<Boolean>
+        get() = _totalAmount
+
+    private val _resetList = MutableLiveData<Boolean>(false)
+    val resetList: LiveData<Boolean>
+        get() = _resetList
+
+
+    fun getMenuListForMeal(meal: String) {
         viewModelScope.launch {
-            _menuList.value =
-                mainRepository.getMenuListForMealFromDataSource()
+
+            var list = mainRepository.getMenuListForMealFromDataSource() ?: emptyList()
+
+            convertToOrderItems(list)
+
         }
     }
 
-    fun setCheckedItemsList(updatedCheckedItems: MutableList<FoodMenu>) {
+    private fun convertToOrderItems(foodMenus: List<FoodMenu>) {
+        var list = foodMenus.map { foodMenu ->
+            OrderItem(
+                foodMenu.name,
+                foodMenu.price,
+                0
+            ) // Assuming quantity is 0 for each item
+        }
+        if (list.isEmpty()) {
+            _menuList.postValue(list)
+        } else {
+            _menuList.postValue(list)
+        }
+    }
+
+    fun setCheckedItemsList(updatedCheckedItems: MutableList<OrderItem>) {
         _emptyOrder.value = updatedCheckedItems.size < 1
         _checkedItems.value = updatedCheckedItems
     }
@@ -47,10 +76,17 @@ class CreateOrderViewModel @Inject constructor(
     }
 
     fun saveData(myOrder: OrderDetail) {
-        Log.d("Orders", "saveData: $myOrder")
-//        viewModelScope.launch {
-//            mainRepository.placeOrderInDataSource(myOrder)
-//        }
+        Log.e("Orders", "saveData: $myOrder")
+        viewModelScope.launch {
+            val res = mainRepository.placeOrderInDataSource(myOrder)
+            if(res!=null){
+                _resetList.postValue(true)
+            }
+        }
+    }
+
+    fun calculateTotal() {
+        _totalAmount.value = true
     }
 
     init {
