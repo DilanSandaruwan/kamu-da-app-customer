@@ -9,31 +9,28 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dilan.kamuda.customerapp.databinding.FragmentCreateOrderBinding
-import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.dilan.kamuda.customerapp.util.CustomDialogFragment
 import com.dilan.kamuda.customerapp.viewmodels.order.CreateOrderViewModel
 import com.dilan.kamuda.customerapp.views.adapters.CreateOrderAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Date
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @AndroidEntryPoint
-class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener {
+class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
+    CreateOrderAdapter.OnItemQuantityChangeListener {
 
     private lateinit var viewModel: CreateOrderViewModel
     private lateinit var binding: FragmentCreateOrderBinding
     private lateinit var adapter: CreateOrderAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentCreateOrderBinding.inflate(layoutInflater, container, false)
         viewModel = ViewModelProvider(requireActivity())[CreateOrderViewModel::class.java]
@@ -51,10 +48,10 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener {
         adapter = CreateOrderAdapter(object :
             CreateOrderAdapter.OnItemClickListener {
 
-            override fun itemClick(item: FoodMenu) {
+            override fun itemClick(item: OrderItem) {
 
             }
-        }, this)
+        }, this, this)
 
         binding.rvMakeOrderItem.also {
             it.layoutManager = _layoutManager
@@ -64,15 +61,17 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener {
 
         binding.btnPlaceOrder.setOnClickListener {
             val checkedItems = adapter.getCheckedItemsList()
+
             val dialogFragment = CustomDialogFragment.newInstance(
-                title = "Custom Dialog",
-                message = "This is a custom dialog with checked items.",
+                title = "Order Confirmation",
+                message = "Please press Confirm if you sure to confirm the order.",
                 positiveButtonText = "Confirm",
                 negativeButtonText = "Cancel",
                 checkedItems = checkedItems
             )
             dialogFragment.setPositiveActionListener { setOrderDetails(checkedItems) }
             dialogFragment.show(childFragmentManager, "custom_dialog")
+
         }
 
         viewModel.menuList.observe(viewLifecycleOwner) {
@@ -80,7 +79,12 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener {
         }
 
         viewModel.checkedItems.observe(viewLifecycleOwner) { it ->
-            //binding.tvTotal.text = it.sumOf { it.price * it.itemCount }.toString()
+            if (it.size > 0) {
+                binding.tvTotal.text = it.sumOf { it.price * it.quantity }.toString()
+            } else {
+                binding.tvTotal.text = "0.00"
+            }
+            binding.btnPlaceOrder.isEnabled = !it.any { it.quantity == 0 }
             adapter.setCheckedItems(it)
         }
 
@@ -88,9 +92,13 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener {
             binding.btnPlaceOrder.isEnabled = !it
         }
 
+        viewModel.resetList.observe(viewLifecycleOwner){
+            resetOrder()
+        }
+
     }
 
-    override fun onItemChecked(item: FoodMenu, isChecked: Boolean) {
+    override fun onItemChecked(item: OrderItem, isChecked: Boolean) {
         val updatedCheckedItems = viewModel.checkedItems.value?.toMutableList() ?: mutableListOf()
         if (isChecked) {
             if (!updatedCheckedItems.contains(item)) {
@@ -102,22 +110,47 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener {
         viewModel.setCheckedItemsList(updatedCheckedItems)
     }
 
-    private fun setOrderDetails(checkedItems: List<FoodMenu>) {
+    override fun onItemQuantityChanged(isChanged: Boolean) {
+        if (isChanged) {
+            val it = viewModel.checkedItems.value?.toMutableList() ?: mutableListOf()
+            if (it.size > 0) {
+                binding.tvTotal.text = it.sumOf { it.price * it.quantity }.toString()
+                binding.btnPlaceOrder.isEnabled = !it.any { it.quantity == 0 }
+            } else {
+                binding.tvTotal.text = "0.00"
+            }
+        }
+    }
+
+    private fun setOrderDetails(checkedItems: List<OrderItem>) {
         var mutableList = mutableListOf<OrderItem>()
         for (i in checkedItems) {
-            mutableList.add(OrderItem(i.id.toInt(), i.name, i.price, i.itemCount))
+            mutableList.add(OrderItem(i.name, i.price, i.quantity))
         }
         val list = mutableList
-        val myOrder = OrderDetail(
-            -1,
-            Date().toString(),
-            "breakfast",
-            "pending",
-            checkedItems.sumOf { it.price * it.itemCount }.toDouble(),
-            list,
-        )
+        val myOrder =
+            OrderDetail(
+                -1,
+                12,
+                checkedItems.sumOf { it.price * it.quantity }.toDouble(),
+                "2023-09-16",
+                "pending",
+                getThisTime(),
+                list,
+            )
 
         viewModel.saveData(myOrder)
+    }
+
+    private fun getThisTime():String{
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val currentDateAndTime = sdf.format(Calendar.getInstance().time)
+        return currentDateAndTime
+    }
+
+    private fun resetOrder(){
+        viewModel.setCheckedItemsList(mutableListOf())
+        //viewModel.getMenuListForMeal("breakfast")
     }
 
 }

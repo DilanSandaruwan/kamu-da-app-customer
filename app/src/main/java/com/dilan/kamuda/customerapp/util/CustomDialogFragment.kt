@@ -8,7 +8,7 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.dilan.kamuda.customerapp.R
-import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
+import com.dilan.kamuda.customerapp.model.order.OrderItem
 
 class CustomDialogFragment : DialogFragment() {
     companion object {
@@ -25,7 +25,7 @@ class CustomDialogFragment : DialogFragment() {
             positiveButtonText: String = "OK",
             negativeButtonText: String? = null,
             neutralButtonText: String? = null,
-            checkedItems: List<FoodMenu>,
+            checkedItems: List<OrderItem>,
         ): CustomDialogFragment {
             val fragment = CustomDialogFragment()
             val args = Bundle().apply {
@@ -44,7 +44,7 @@ class CustomDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val title = requireArguments().getString(ARG_TITLE, "")
         val message = requireArguments().getString(ARG_MESSAGE, "")
-        val checkedItems = arguments?.getSerializable(ARG_CHECKED_ITEMS) as? List<FoodMenu>
+        val checkedItems = arguments?.getSerializable(ARG_CHECKED_ITEMS) as? List<OrderItem>
 
         val inflater = requireActivity().layoutInflater
         val customView = inflater.inflate(R.layout.dialog_layout_custom, null)
@@ -67,9 +67,8 @@ class CustomDialogFragment : DialogFragment() {
                 requireArguments().getString(ARG_POSITIVE_BUTTON_TEXT)
             ) { _, _ -> positiveActionListener?.invoke() }
             .setNegativeButton(
-                requireArguments().getString(ARG_NEGATIVE_BUTTON_TEXT),
-                { _, _ -> negativeActionListener?.invoke() }
-            )
+                requireArguments().getString(ARG_NEGATIVE_BUTTON_TEXT)
+            ) { _, _ -> negativeActionListener?.invoke() }
 
         requireArguments().getString(ARG_NEUTRAL_BUTTON_TEXT)?.let {
             builder.setNeutralButton(it) { _, _ -> neutralActionListener?.invoke() }
