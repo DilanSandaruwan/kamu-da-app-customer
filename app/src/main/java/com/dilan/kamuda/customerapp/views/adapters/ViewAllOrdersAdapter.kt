@@ -23,6 +23,7 @@ class ViewAllOrdersAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val orderId: MaterialTextView = view.findViewById(R.id.mtvOrderId)
         val orderTotal: MaterialTextView = view.findViewById(R.id.mtvOrderTotal)
+        val orderStatus: MaterialTextView = view.findViewById(R.id.tvOrderStatus)
         val rvOrderItems: RecyclerView = view.findViewById(R.id.rvViewOrderItems)
         val lytBtnToggle: RelativeLayout = view.findViewById(R.id.lytBtnToggle)
         val btnArrowUp: ImageView = view.findViewById(R.id.btnArrowUp)
@@ -61,6 +62,7 @@ class ViewAllOrdersAdapter(
         val item = getItem(position)
         holder.orderId.text = item.id.toString()
         holder.orderTotal.text = item.total.toString()
+        holder.orderStatus.text = item.status
         // Set up child RecyclerView
         val childAdapter = ViewOrderedItemsAdapter()
         holder.rvOrderItems.layoutManager =

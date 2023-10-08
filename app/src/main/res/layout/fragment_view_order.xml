@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewOrderVM"
             type="com.dilan.kamuda.customerapp.viewmodels.order.ViewOrderViewModel" />
@@ -27,7 +28,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:background="@color/transparent"
-                android:src="@drawable/ic_round_arrow_back_24dp" />
+                android:src="@drawable/ic_round_arrow_back_24dp"
+                android:visibility="invisible" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -88,7 +90,8 @@
             android:layout_below="@+id/header2"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp">
+            android:layout_marginEnd="10dp"
+            android:visibility="gone">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -138,28 +141,28 @@
             android:id="@+id/rvViewOrderDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="50dp"
             android:layout_below="@+id/titleFoodHouse"
+            android:layout_alignParentBottom="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
-            android:visibility="gone"/>
+            android:layout_marginBottom="50dp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tvNoOrdersYet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No orders yet."
-            android:gravity="center"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="50dp"
             android:layout_below="@+id/titleFoodHouse"
+            android:layout_alignParentBottom="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="50dp"
+            android:gravity="center"
+            android:text="No orders yet."
             android:textSize="20sp"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
 
     </RelativeLayout>

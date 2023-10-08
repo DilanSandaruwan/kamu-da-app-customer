@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.repository
 
 import android.util.Log
+import com.dilan.kamuda.customerapp.model.foodhouse.FoodHouse
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.network.OnBoardingApiService
@@ -38,7 +39,7 @@ class MainRepository @Inject constructor(
         try {
             val response = orderApiService.getOrdersList(id)
             if (response.isSuccessful) {
-                Log.e(TAG, "getOrderListResponseFromRemoteService: ${response.body()}", )
+                Log.e(TAG, "getOrderListResponseFromRemoteService: ${response.body()}")
                 return response.body()
             }
             return emptyList()
@@ -58,11 +59,24 @@ class MainRepository @Inject constructor(
     private suspend fun placeOrderInRemoteService(myOrder: OrderDetail): OrderDetail? {
         val response = orderApiService.placeOrderInStore(myOrder)
         if (response.isSuccessful) {
-            Log.e(TAG, "placeOrderInRemoteService: success: ${response.body()}", )
+            Log.e(TAG, "placeOrderInRemoteService: success: ${response.body()}")
             return response.body()
-//            return response.body()
         }
-        Log.e(TAG, "placeOrderInRemoteService: failure: ${response.body()}", )
+        Log.e(TAG, "placeOrderInRemoteService: failure: ${response.body()}")
+        return null
+    }
+
+    suspend fun getFoodHouseDetailsFromDataSource(): FoodHouse? {
+        return withContext(Dispatchers.IO) {
+            return@withContext getFoodHouseDetailsFromRemoteSource()
+        }
+    }
+
+    private suspend fun getFoodHouseDetailsFromRemoteSource(): FoodHouse? {
+        val response = onBoardingApiService.getFoodHouse()
+        if (response.isSuccessful) {
+            return response.body()
+        }
         return null
     }
 

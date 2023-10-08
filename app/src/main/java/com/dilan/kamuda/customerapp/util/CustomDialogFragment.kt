@@ -81,15 +81,6 @@ class CustomDialogFragment : DialogFragment() {
         return alertDialog
     }
 
-//    private fun positiveButtonClickListener(): DialogInterface.OnClickListener =
-//        DialogInterface.OnClickListener { _, _ -> }
-//
-//    private fun negativeButtonClickListener(): DialogInterface.OnClickListener =
-//        DialogInterface.OnClickListener { _, _ -> }
-//
-//    private fun neutralButtonClickListener(): DialogInterface.OnClickListener =
-//        DialogInterface.OnClickListener { _, _ -> }
-
     private var positiveActionListener: (() -> Unit)? = null
 
     private var negativeActionListener: (() -> Unit)? = null
