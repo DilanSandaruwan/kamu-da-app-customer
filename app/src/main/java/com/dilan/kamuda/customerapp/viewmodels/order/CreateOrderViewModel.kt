@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItem
+import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,12 +21,12 @@ class CreateOrderViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val _menuList = MutableLiveData<List<OrderItem>>()
-    val menuList: LiveData<List<OrderItem>>
+    private val _menuList = MutableLiveData<List<OrderItemIntermediate>>()
+    val menuList: LiveData<List<OrderItemIntermediate>>
         get() = _menuList
 
-    private val _checkedItems = MutableLiveData<List<OrderItem>>()
-    val checkedItems: LiveData<List<OrderItem>>
+    private val _checkedItems = MutableLiveData<List<OrderItemIntermediate>>()
+    val checkedItems: LiveData<List<OrderItemIntermediate>>
         get() = _checkedItems
 
     private val _emptyOrder = MutableLiveData<Boolean>(true)
@@ -46,14 +47,14 @@ class CreateOrderViewModel @Inject constructor(
 
             var list = mainRepository.getMenuListForMealFromDataSource() ?: emptyList()
 
-            convertToOrderItems(list)
+            convertToOrderItemsIntermediate(list)
 
         }
     }
 
-    private fun convertToOrderItems(foodMenus: List<FoodMenu>) {
+    private fun convertToOrderItemsIntermediate(foodMenus: List<FoodMenu>) {
         var list = foodMenus.map { foodMenu ->
-            OrderItem(
+            OrderItemIntermediate(
                 foodMenu.name,
                 foodMenu.price,
                 0
@@ -66,7 +67,7 @@ class CreateOrderViewModel @Inject constructor(
         }
     }
 
-    fun setCheckedItemsList(updatedCheckedItems: MutableList<OrderItem>) {
+    fun setCheckedItemsList(updatedCheckedItems: MutableList<OrderItemIntermediate>) {
         _emptyOrder.value = updatedCheckedItems.size < 1
         _checkedItems.value = updatedCheckedItems
     }

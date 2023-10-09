@@ -8,7 +8,7 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.dilan.kamuda.customerapp.R
-import com.dilan.kamuda.customerapp.model.order.OrderItem
+import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
 
 class CustomDialogFragment : DialogFragment() {
     companion object {
@@ -25,7 +25,7 @@ class CustomDialogFragment : DialogFragment() {
             positiveButtonText: String = "OK",
             negativeButtonText: String? = null,
             neutralButtonText: String? = null,
-            checkedItems: List<OrderItem>,
+            checkedItems: List<OrderItemIntermediate>,
         ): CustomDialogFragment {
             val fragment = CustomDialogFragment()
             val args = Bundle().apply {
@@ -44,7 +44,7 @@ class CustomDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val title = requireArguments().getString(ARG_TITLE, "")
         val message = requireArguments().getString(ARG_MESSAGE, "")
-        val checkedItems = arguments?.getSerializable(ARG_CHECKED_ITEMS) as? List<OrderItem>
+        val checkedItems = arguments?.getSerializable(ARG_CHECKED_ITEMS) as? List<OrderItemIntermediate>
 
         val inflater = requireActivity().layoutInflater
         val customView = inflater.inflate(R.layout.dialog_layout_custom, null)

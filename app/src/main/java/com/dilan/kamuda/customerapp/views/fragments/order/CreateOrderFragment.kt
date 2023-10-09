@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dilan.kamuda.customerapp.databinding.FragmentCreateOrderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItem
+import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
 import com.dilan.kamuda.customerapp.util.CustomDialogFragment
 import com.dilan.kamuda.customerapp.viewmodels.order.CreateOrderViewModel
 import com.dilan.kamuda.customerapp.views.adapters.CreateOrderAdapter
@@ -48,7 +49,7 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         adapter = CreateOrderAdapter(object :
             CreateOrderAdapter.OnItemClickListener {
 
-            override fun itemClick(item: OrderItem) {
+            override fun itemClick(item: OrderItemIntermediate) {
 
             }
         }, this, this)
@@ -98,7 +99,7 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
 
     }
 
-    override fun onItemChecked(item: OrderItem, isChecked: Boolean) {
+    override fun onItemChecked(item: OrderItemIntermediate, isChecked: Boolean) {
         val updatedCheckedItems = viewModel.checkedItems.value?.toMutableList() ?: mutableListOf()
         if (isChecked) {
             if (!updatedCheckedItems.contains(item)) {
@@ -122,8 +123,9 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         }
     }
 
-    private fun setOrderDetails(checkedItems: List<OrderItem>) {
+    private fun setOrderDetails(checkedItems: List<OrderItemIntermediate>) {
         var mutableList = mutableListOf<OrderItem>()
+
         for (i in checkedItems) {
             mutableList.add(OrderItem(i.name, i.price, i.quantity))
         }

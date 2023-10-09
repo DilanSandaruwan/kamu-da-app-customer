@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.model.order.OrderItem
+import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textview.MaterialTextView
 
@@ -19,19 +20,19 @@ class CreateOrderAdapter(
     private val itemClickListener: OnItemClickListener,
     private val checkedItemListener: CheckedItemListener,
     private val onItemQuantityChangeListener: OnItemQuantityChangeListener,
-) : ListAdapter<OrderItem, CreateOrderAdapter.ViewHolder>(diff_util) {
+) : ListAdapter<OrderItemIntermediate, CreateOrderAdapter.ViewHolder>(diff_util) {
     interface OnItemClickListener {
-        fun itemClick(item: OrderItem)
+        fun itemClick(item: OrderItemIntermediate)
     }
 
     interface CheckedItemListener {
-        fun onItemChecked(item: OrderItem, isChecked: Boolean)
+        fun onItemChecked(item: OrderItemIntermediate, isChecked: Boolean)
     }
 
     interface OnItemQuantityChangeListener{
         fun onItemQuantityChanged(isChanged:Boolean)
     }
-    private val checkedItems = mutableListOf<OrderItem>()
+    private val checkedItems = mutableListOf<OrderItemIntermediate>()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val itemName: MaterialTextView = view.findViewById(R.id.mtvItemName)
@@ -44,15 +45,15 @@ class CreateOrderAdapter(
 
     companion object {
 
-        val diff_util = object : DiffUtil.ItemCallback<OrderItem>() {
+        val diff_util = object : DiffUtil.ItemCallback<OrderItemIntermediate>() {
 
-            override fun areItemsTheSame(oldItem: OrderItem, newItem: OrderItem): Boolean {
+            override fun areItemsTheSame(oldItem: OrderItemIntermediate, newItem: OrderItemIntermediate): Boolean {
                 return oldItem.name == newItem.name
             }
 
             override fun areContentsTheSame(
-                oldItem: OrderItem,
-                newItem: OrderItem
+                oldItem: OrderItemIntermediate,
+                newItem: OrderItemIntermediate
             ): Boolean {
                 return oldItem == newItem
             }
@@ -120,13 +121,13 @@ class CreateOrderAdapter(
 
     }
 
-    fun setCheckedItems(items: List<OrderItem>) {
+    fun setCheckedItems(items: List<OrderItemIntermediate>) {
         checkedItems.clear()
         checkedItems.addAll(items)
         submitList(currentList)
     }
 
-    fun getCheckedItemsList(): List<OrderItem> {
+    fun getCheckedItemsList(): List<OrderItemIntermediate> {
         return checkedItems.toList()
     }
 }

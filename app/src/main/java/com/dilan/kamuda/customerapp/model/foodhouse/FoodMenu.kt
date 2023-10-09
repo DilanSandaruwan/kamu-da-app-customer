@@ -8,4 +8,5 @@ data class FoodMenu(
     @SerializedName("name") val name: String,
     @SerializedName("price") val price: Double,
     @SerializedName("status") val status: Boolean,
+    @SerializedName("image") val image: String?,
 ) : Serializable
