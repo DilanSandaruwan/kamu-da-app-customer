@@ -17,6 +17,10 @@ class ViewOrderViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
+    var currentlySelectedGroup = "ongoing"
+    val ongoingList = MutableLiveData<List<OrderDetail>>()
+    val pastOrdersList = MutableLiveData<List<OrderDetail>>()
+
     private val _ordersList = MutableLiveData<List<OrderDetail>>()
     val ordersList: LiveData<List<OrderDetail>>
         get() = _ordersList

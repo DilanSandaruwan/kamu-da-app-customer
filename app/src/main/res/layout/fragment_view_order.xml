@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -49,45 +50,38 @@
                 android:background="@color/transparent" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/header2"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/header"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@color/white">
+            android:shadowColor="@color/black"
+            android:outlineSpotShadowColor="@color/green"
+            app:singleSelection="true"
+            android:layout_centerHorizontal="true">
 
-            <TextView
-                android:id="@+id/tvMeal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/meal_name"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+            <Button
+                android:id="@+id/btnOngoingOrders"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:outlineAmbientShadowColor="@color/red"
+                android:layout_height="wrap_content"
+                android:text="Ongoing" />
 
-            <TextView
-                android:id="@+id/tvMealDate"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/date_for_order"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            <Button
+                android:id="@+id/btnPastOrders"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Past Orders"
+                android:textColor="@color/black" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <LinearLayout
             android:id="@+id/titleFoodHouse"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_below="@+id/header2"
+            android:layout_below="@+id/header"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
@@ -141,19 +135,19 @@
             android:id="@+id/rvViewOrderDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/titleFoodHouse"
+            android:layout_below="@+id/toggleButton"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="50dp"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/tvNoOrdersYet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/titleFoodHouse"
+            android:layout_below="@+id/toggleButton"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"

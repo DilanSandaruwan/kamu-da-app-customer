@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.NO_ID
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -53,7 +54,7 @@ class ViewOrderFragment : Fragment() {
             ViewAllOrdersAdapter.OnItemClickListener {
 
             override fun itemClick(item: OrderDetail) {
-
+                //viewModel.updateOrderWithStatus(itemId, status)
             }
         })
 
@@ -63,15 +64,53 @@ class ViewOrderFragment : Fragment() {
             it.adapter = adapter
         }
 
-        viewModel.ordersList.observe(viewLifecycleOwner) {
-            if(it.isNotEmpty()){
+        viewModel.ordersList.observe(viewLifecycleOwner) { listOfOrders ->
+            if (listOfOrders.isNotEmpty()) {
                 binding.tvNoOrdersYet.visibility = GONE
                 binding.rvViewOrderDetails.visibility = VISIBLE
-                adapter.submitList(it)
+                viewModel.ongoingList.value =
+                    listOfOrders.filter { it.status == "pending" || it.status == "accepted" }
+                viewModel.pastOrdersList.value =
+                    listOfOrders.filter { it.status != "pending" && it.status != "accepted" }
+                when (viewModel.currentlySelectedGroup) {
+                    "ongoing" -> adapter.submitList(viewModel.ongoingList.value)
+                    "past-orders" -> adapter.submitList(viewModel.pastOrdersList.value)
+                    else -> adapter.submitList(viewModel.ongoingList.value)
+                }
             } else {
                 binding.rvViewOrderDetails.visibility = GONE
                 binding.tvNoOrdersYet.visibility = VISIBLE
             }
+        }
+
+        binding.toggleButton.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    binding.btnOngoingOrders.id -> {
+                        viewModel.currentlySelectedGroup = "ongoing"
+                        adapter.submitList(viewModel.ongoingList.value)
+                    }
+
+                    binding.btnPastOrders.id -> {
+                        viewModel.currentlySelectedGroup = "past-orders"
+                        adapter.submitList(viewModel.pastOrdersList.value)
+                    }
+                }
+            } else {
+                if (toggleButton.checkedButtonId == NO_ID) {
+                    viewModel.currentlySelectedGroup = "ongoing"
+                    adapter.submitList(viewModel.ongoingList.value)
+                }
+            }
+        }
+        binding.btnOngoingOrders.setOnClickListener {
+            viewModel.currentlySelectedGroup = "ongoing"
+            adapter.submitList(viewModel.ongoingList.value)
+        }
+
+        binding.btnPastOrders.setOnClickListener {
+            viewModel.currentlySelectedGroup = "past-orders"
+            adapter.submitList(viewModel.pastOrdersList.value)
         }
     }
 }

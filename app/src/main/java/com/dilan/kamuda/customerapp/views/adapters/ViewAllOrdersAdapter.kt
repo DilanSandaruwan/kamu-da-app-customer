@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
 
 class ViewAllOrdersAdapter(
@@ -22,12 +23,16 @@ class ViewAllOrdersAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val orderId: MaterialTextView = view.findViewById(R.id.mtvOrderId)
+        val orderDate: MaterialTextView = view.findViewById(R.id.mtvOrderDate)
         val orderTotal: MaterialTextView = view.findViewById(R.id.mtvOrderTotal)
+        val orderItemCount: MaterialTextView = view.findViewById(R.id.mtvOrderedItemCount)
         val orderStatus: MaterialTextView = view.findViewById(R.id.tvOrderStatus)
         val rvOrderItems: RecyclerView = view.findViewById(R.id.rvViewOrderItems)
         val lytBtnToggle: RelativeLayout = view.findViewById(R.id.lytBtnToggle)
         val btnArrowUp: ImageView = view.findViewById(R.id.btnArrowUp)
         val btnArrowDown: ImageView = view.findViewById(R.id.btnArrowDown)
+        val btnOrderReject: MaterialButton = view.findViewById(R.id.btnOrderReject)
+        val btnReOrder: MaterialButton = view.findViewById(R.id.btnReOrder)
     }
 
     interface OnItemClickListener {
@@ -61,8 +66,22 @@ class ViewAllOrdersAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.orderId.text = item.id.toString()
-        holder.orderTotal.text = item.total.toString()
+        holder.orderDate.text = item.date
+        holder.orderTotal.text = "LKR ${item.total}"
+        holder.orderItemCount.text = "${item.items.size} Items"
         holder.orderStatus.text = item.status
+
+        if(item.status == "pending" ){
+            holder.btnOrderReject.visibility = VISIBLE
+            holder.btnReOrder.visibility = GONE
+        } else {
+            if(item.status == "accepted"){
+                holder.btnReOrder.visibility = GONE
+            } else {
+                holder.btnReOrder.visibility = VISIBLE
+            }
+            holder.btnOrderReject.visibility = GONE
+        }
         // Set up child RecyclerView
         val childAdapter = ViewOrderedItemsAdapter()
         holder.rvOrderItems.layoutManager =
