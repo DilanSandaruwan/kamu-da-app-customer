@@ -46,7 +46,7 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         val _layoutManager = LinearLayoutManager(requireContext())
         val _dividerItemDecoration =
             DividerItemDecoration(requireContext(), _layoutManager.orientation)
-        adapter = CreateOrderAdapter(object :
+        adapter = CreateOrderAdapter(this,object :
             CreateOrderAdapter.OnItemClickListener {
 
             override fun itemClick(item: OrderItemIntermediate) {

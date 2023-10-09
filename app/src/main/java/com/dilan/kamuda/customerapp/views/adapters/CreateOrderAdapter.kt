@@ -1,5 +1,7 @@
 package com.dilan.kamuda.customerapp.views.adapters
 
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
@@ -10,13 +12,18 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
+import com.dilan.kamuda.customerapp.util.component.RoundedImageView
+import com.dilan.kamuda.customerapp.views.fragments.order.CreateOrderFragment
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textview.MaterialTextView
 
 class CreateOrderAdapter(
+    private val contextIs:CreateOrderFragment,
     private val itemClickListener: OnItemClickListener,
     private val checkedItemListener: CheckedItemListener,
     private val onItemQuantityChangeListener: OnItemQuantityChangeListener,
@@ -41,6 +48,7 @@ class CreateOrderAdapter(
         val btnIncrement: ImageButton = view.findViewById(R.id.btnIncrement)
         val btnDecrement: ImageButton = view.findViewById(R.id.btnDecrement)
         val tvItemCount: TextView = view.findViewById(R.id.tvItemCount)
+        val ivRoundedImageView: RoundedImageView = view.findViewById(R.id.ivRoundMenuItem)
     }
 
     companion object {
@@ -74,7 +82,16 @@ class CreateOrderAdapter(
         holder.itemPrice.text = item.price.toString()
         holder.tvItemCount.text = item.quantity.toString()
         holder.cbxOrderItem.isChecked = item in checkedItems
-
+        if (item.image != null) {
+            var imageBitmap =
+                BitmapFactory.decodeByteArray(item.image as ByteArray?, 0, item.image.size)
+            Glide.with(contextIs)
+                .load(imageBitmap)
+                .diskCacheStrategy(
+                    DiskCacheStrategy.ALL
+                )
+                .into(holder.ivRoundedImageView)
+        }
         holder.cbxOrderItem.setOnCheckedChangeListener { _, isChecked ->
             checkedItemListener.onItemChecked(item, isChecked) // Call the callback method
 

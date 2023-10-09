@@ -53,17 +53,32 @@ class CreateOrderViewModel @Inject constructor(
     }
 
     private fun convertToOrderItemsIntermediate(foodMenus: List<FoodMenu>) {
-        var list = foodMenus.map { foodMenu ->
-            OrderItemIntermediate(
-                foodMenu.name,
-                foodMenu.price,
-                0
-            ) // Assuming quantity is 0 for each item
+
+        var modifiedResponseBody = mutableListOf<OrderItemIntermediate>()
+        var originalResponseBody = foodMenus
+        var bitmap: ByteArray?
+        originalResponseBody.let {
+            for (item in originalResponseBody) {
+
+                bitmap = if (item.image != null) {
+                    val imageData =
+                        android.util.Base64.decode(item.image, android.util.Base64.DEFAULT)
+                    imageData
+                    //BitmapFactory.decodeByteArray(imageData,0,imageData.size)
+                } else {
+                    null
+                }
+                modifiedResponseBody.add(
+                    OrderItemIntermediate(item.name, item.price, 0, bitmap)
+                )
+            }
         }
-        if (list.isEmpty()) {
-            _menuList.postValue(list)
+
+
+        if (modifiedResponseBody.isEmpty()) {
+            _menuList.postValue(modifiedResponseBody)
         } else {
-            _menuList.postValue(list)
+            _menuList.postValue(modifiedResponseBody)
         }
     }
 
