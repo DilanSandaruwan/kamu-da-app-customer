@@ -3,9 +3,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".views.fragments.foodhouse.FoodHouseFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <RelativeLayout
+        android:id="@+id/lytImageView"
+        android:layout_width="match_parent"
+        android:layout_height="270dp">
+        <!-- Restaurant Image -->
+        <ImageView
+            android:id="@+id/imageViewRestaurant"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/img_round_dishes_1"/>
+
+        <!-- Call Icon -->
+        <ImageView
+            android:id="@+id/imageCall"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/ic_phone_orange" />
+    </RelativeLayout>
+
+
+    <!-- Restaurant Name -->
+    <TextView
+        android:id="@+id/textViewRestaurantName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lytImageView"
+        android:text="Restaurant Name"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:padding="16dp" />
+
+    <!-- Restaurant Address -->
+    <TextView
+        android:id="@+id/textViewRestaurantAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewRestaurantName"
+        android:text="123 Main Street, City"
+        android:textSize="16sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp" />
+
+    <!-- Restaurant Description -->
+    <TextView
+        android:id="@+id/textViewRestaurantDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewRestaurantAddress"
+        android:text="Description of the restaurant goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        android:textSize="16sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:visibility="gone"/>
+
+    <!-- Menu Button -->
+    <Button
+        android:id="@+id/buttonViewMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewRestaurantDescription"
+        android:text="View Menu"
+        android:layout_centerHorizontal="true"
+        android:padding="12dp" />
+
+    <!-- Restaurant Name -->
+    <TextView
+        android:id="@+id/lblLatestOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonViewMenu"
+        android:text="Favourites"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:padding="16dp" />
 
 
 </RelativeLayout>

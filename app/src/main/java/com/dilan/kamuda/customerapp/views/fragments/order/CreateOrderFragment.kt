@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.views.fragments.order
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 @AndroidEntryPoint
 class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
@@ -135,7 +137,7 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
                 -1,
                 12,
                 checkedItems.sumOf { it.price * it.quantity }.toDouble(),
-                "2023-09-16",
+                getThisDate(),
                 "pending",
                 getThisTime(),
                 list,
@@ -144,10 +146,13 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         viewModel.saveData(myOrder)
     }
 
-    private fun getThisTime():String{
+    private fun getThisTime(): String {
+        val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        return sdf.format(Calendar.getInstance().time)
+    }
+    private fun getThisDate(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val currentDateAndTime = sdf.format(Calendar.getInstance().time)
-        return currentDateAndTime
+        return sdf.format(Calendar.getInstance().time)
     }
 
     private fun resetOrder(){
