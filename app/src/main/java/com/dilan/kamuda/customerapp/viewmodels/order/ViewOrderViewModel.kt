@@ -29,6 +29,10 @@ class ViewOrderViewModel @Inject constructor(
     val objectHasUpdated: LiveData<OrderDetail?>
         get() = _objectHasUpdated
 
+    private val _resetList = MutableLiveData<Boolean>(false)
+    val resetList: LiveData<Boolean>
+        get() = _resetList
+
     fun getOrdersListOfCustomer(custId: Int) {
         viewModelScope.launch {
             _ordersList.postValue(mainRepository.getOrderListFromDataSource(custId))
@@ -55,6 +59,16 @@ class ViewOrderViewModel @Inject constructor(
 //        _ordersList.value = listOf(orderDetail)
 
     }
+
+//    fun saveData(myOrder: OrderDetail) {
+//        Log.e("Orders", "saveData: $myOrder")
+//        viewModelScope.launch {
+//            val res = mainRepository.placeOrderInDataSource(myOrder)
+//            if (res != null) {
+//                _resetList.postValue(true)
+//            }
+//        }
+//    }
 
     fun updateOrderWithStatus(orderId: Int, status: String) {
         viewModelScope.launch {

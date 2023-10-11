@@ -1,7 +1,6 @@
 package com.dilan.kamuda.customerapp.views.fragments.order
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +13,13 @@ import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
 import com.dilan.kamuda.customerapp.util.CustomDialogFragment
+import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.order.CreateOrderViewModel
 import com.dilan.kamuda.customerapp.views.adapters.CreateOrderAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.TimeZone
 
 @AndroidEntryPoint
 class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
@@ -48,7 +47,7 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         val _layoutManager = LinearLayoutManager(requireContext())
         val _dividerItemDecoration =
             DividerItemDecoration(requireContext(), _layoutManager.orientation)
-        adapter = CreateOrderAdapter(this,object :
+        adapter = CreateOrderAdapter(this, object :
             CreateOrderAdapter.OnItemClickListener {
 
             override fun itemClick(item: OrderItemIntermediate) {
@@ -95,7 +94,7 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
             binding.btnPlaceOrder.isEnabled = !it
         }
 
-        viewModel.resetList.observe(viewLifecycleOwner){
+        viewModel.resetList.observe(viewLifecycleOwner) {
             resetOrder()
         }
 
@@ -127,6 +126,7 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
 
     private fun setOrderDetails(checkedItems: List<OrderItemIntermediate>) {
         var mutableList = mutableListOf<OrderItem>()
+        val custId = KamuDaSecurePreference().getCustomerID(requireContext()).toInt()
 
         for (i in checkedItems) {
             mutableList.add(OrderItem(i.name, i.price, i.quantity))
@@ -135,7 +135,7 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         val myOrder =
             OrderDetail(
                 -1,
-                12,
+                custId,
                 checkedItems.sumOf { it.price * it.quantity }.toDouble(),
                 getThisDate(),
                 "pending",
@@ -150,12 +150,13 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
         return sdf.format(Calendar.getInstance().time)
     }
+
     private fun getThisDate(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return sdf.format(Calendar.getInstance().time)
     }
 
-    private fun resetOrder(){
+    private fun resetOrder() {
         viewModel.setCheckedItemsList(mutableListOf())
         //viewModel.getMenuListForMeal("breakfast")
     }

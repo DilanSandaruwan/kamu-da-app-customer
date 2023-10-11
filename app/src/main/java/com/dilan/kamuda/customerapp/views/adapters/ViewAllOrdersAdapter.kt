@@ -45,6 +45,10 @@ class ViewAllOrdersAdapter(
         fun itemClick(itemId: Int, status: String)
     }
 
+    interface OnReOrderClickListener {
+        fun ReOrderClick(item: OrderDetail)
+    }
+
     companion object {
 
         val diff_util = object : DiffUtil.ItemCallback<OrderDetail>() {
@@ -90,8 +94,9 @@ class ViewAllOrdersAdapter(
                     )
 
             }
+
             else -> {
-                if(item.status == "accepted"){
+                if (item.status == "accepted") {
                     holder.btnReOrder.visibility = GONE
                 } else {
                     holder.btnReOrder.visibility = VISIBLE
@@ -113,6 +118,7 @@ class ViewAllOrdersAdapter(
                         R.color.black
                     )
             }
+
             "rejected" -> {
                 holder.vDividerStatus.dividerColor =
                     ContextCompat.getColor(
@@ -120,6 +126,7 @@ class ViewAllOrdersAdapter(
                         R.color.redish
                     )
             }
+
             "cancelled" -> {
                 holder.vDividerStatus.dividerColor =
                     ContextCompat.getColor(

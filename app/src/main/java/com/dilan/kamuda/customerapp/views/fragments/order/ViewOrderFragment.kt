@@ -121,6 +121,38 @@ class ViewOrderFragment : Fragment() {
         }
     }
 
+    //    private fun setOrderDetails(checkedItems: List<OrderItemIntermediate>) {
+//        var mutableList = mutableListOf<OrderItem>()
+//        val custId = KamuDaSecurePreference().getCustomerID(requireContext()).toInt()
+//
+//        for (i in checkedItems) {
+//            mutableList.add(OrderItem(i.name, i.price, i.quantity, i.status))
+//        }
+//        val list = mutableList
+//        val myOrder =
+//            OrderDetail(
+//                -1,
+//                custId,
+//                checkedItems.sumOf { it.price * it.quantity }.toDouble(),
+//                getThisDate(),
+//                "pending",
+//                getThisTime(),
+//                list,
+//            )
+//
+//        viewModel.saveData(myOrder)
+//    }
+//
+//    private fun getThisTime(): String {
+//        val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+//        return sdf.format(Calendar.getInstance().time)
+//    }
+//
+//    private fun getThisDate(): String {
+//        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+//        return sdf.format(Calendar.getInstance().time)
+//    }
+
     private fun showErrorPopup() {
         Toast.makeText(context, "Response is null!", Toast.LENGTH_LONG).show()
     }

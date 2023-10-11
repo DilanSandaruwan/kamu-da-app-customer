@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.ActivityLoginBinding
+import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.LoginViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +25,9 @@ class LoginActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         binding.btnLogin.setOnClickListener {
-            val intent = Intent(this@LoginActivity,MainActivity::class.java)
+            // Storing the customer ID
+            KamuDaSecurePreference().setCustomerID(this, "12");
+            val intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
         }
     }

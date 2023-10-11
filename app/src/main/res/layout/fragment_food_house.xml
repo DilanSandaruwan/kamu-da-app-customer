@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/aqua"
     android:orientation="vertical"
     tools:context=".views.fragments.foodhouse.FoodHouseFragment">
 
@@ -16,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
-            android:src="@drawable/img_round_dishes_1"/>
+            android:src="@drawable/img_round_dishes_1" />
 
         <!-- Call Icon -->
         <ImageView
@@ -30,64 +31,74 @@
             android:src="@drawable/ic_phone_orange" />
     </RelativeLayout>
 
-
-    <!-- Restaurant Name -->
-    <TextView
-        android:id="@+id/textViewRestaurantName"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lytImageView"
-        android:text="Helanka Foods"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:padding="16dp" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/lytImageView"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bg_top_curved_white">
+        <!-- Restaurant Name -->
+        <TextView
+            android:id="@+id/textViewRestaurantName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:paddingStart="18sp"
+            android:paddingTop="18sp"
+            android:text="Helanka Foods"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-    <!-- Restaurant Address -->
-    <TextView
-        android:id="@+id/textViewRestaurantAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewRestaurantName"
-        android:text="20/A, Francis Lane, Dalugama, Kelaniya"
-        android:textSize="16sp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp" />
+        <!-- Restaurant Address -->
+        <TextView
+            android:id="@+id/textViewRestaurantAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewRestaurantName"
+            android:layout_marginStart="10dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:text="20/A, Francis Lane, Dalugama, Kelaniya"
+            android:textSize="14sp"
+            android:textStyle="italic" />
 
-    <!-- Restaurant Description -->
-    <TextView
-        android:id="@+id/textViewRestaurantDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewRestaurantAddress"
-        android:text="Description of the restaurant goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-        android:textSize="16sp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="16dp"
-        android:visibility="gone"/>
+        <!-- Restaurant Description -->
+        <TextView
+            android:id="@+id/textViewRestaurantDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewRestaurantAddress"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:text="Description of the restaurant goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            android:textSize="16sp"
+            android:visibility="gone" />
 
-    <!-- Menu Button -->
-    <Button
-        android:id="@+id/buttonViewMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textViewRestaurantDescription"
-        android:text="View Menu"
-        android:layout_centerHorizontal="true"
-        android:padding="12dp" />
+        <!-- Menu Button -->
+        <Button
+            android:id="@+id/buttonViewMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textViewRestaurantDescription"
+            android:layout_centerHorizontal="true"
+            android:padding="12dp"
+            android:text="View Menu"
+            android:visibility="gone" />
 
-    <!-- Restaurant Name -->
-    <TextView
-        android:id="@+id/lblLatestOrder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/buttonViewMenu"
-        android:text="Favourites"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:padding="16dp" />
+        <!-- Restaurant Name -->
+        <TextView
+            android:id="@+id/lblLatestOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonViewMenu"
+            android:padding="16dp"
+            android:text="Latest Order"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
 
 </RelativeLayout>
