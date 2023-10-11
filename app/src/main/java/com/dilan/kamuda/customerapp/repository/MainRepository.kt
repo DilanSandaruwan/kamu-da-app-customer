@@ -80,4 +80,24 @@ class MainRepository @Inject constructor(
         return null
     }
 
+    /***
+     * UPDATE the order status
+     */
+    suspend fun updateOrderByIdWithStatusOnDataSource(orderId: Int, status: String): OrderDetail? {
+        return withContext(Dispatchers.IO) {
+            return@withContext (updateOrderByIdWithStatusOnRemoteSource(orderId, status))
+        }
+    }
+
+    private suspend fun updateOrderByIdWithStatusOnRemoteSource(
+        orderId: Int,
+        status: String
+    ): OrderDetail? {
+        val response = orderApiService.updateOrderByIdWithStatus(orderId, status)
+        if (response.isSuccessful) {
+            return response.body()
+        }
+        return null
+    }
+
 }

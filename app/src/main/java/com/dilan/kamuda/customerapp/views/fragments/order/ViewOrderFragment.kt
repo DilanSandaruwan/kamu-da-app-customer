@@ -7,6 +7,7 @@ import android.view.View.GONE
 import android.view.View.NO_ID
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,7 +15,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentViewOrderBinding
-import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.viewmodels.order.ViewOrderViewModel
 import com.dilan.kamuda.customerapp.views.adapters.ViewAllOrdersAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,8 +53,8 @@ class ViewOrderFragment : Fragment() {
         adapter = ViewAllOrdersAdapter(object :
             ViewAllOrdersAdapter.OnItemClickListener {
 
-            override fun itemClick(item: OrderDetail) {
-                //viewModel.updateOrderWithStatus(itemId, status)
+            override fun itemClick(itemId: Int, status: String) {
+                viewModel.updateOrderWithStatus(itemId, status)
             }
         })
 
@@ -81,6 +81,13 @@ class ViewOrderFragment : Fragment() {
                 binding.rvViewOrderDetails.visibility = GONE
                 binding.tvNoOrdersYet.visibility = VISIBLE
             }
+        }
+
+        viewModel.objectHasUpdated.observe(viewLifecycleOwner) {
+            if (it != null)
+                viewModel.getOrdersListOfCustomer(12)
+            else
+                showErrorPopup()
         }
 
         binding.toggleButton.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
@@ -112,5 +119,9 @@ class ViewOrderFragment : Fragment() {
             viewModel.currentlySelectedGroup = "past-orders"
             adapter.submitList(viewModel.pastOrdersList.value)
         }
+    }
+
+    private fun showErrorPopup() {
+        Toast.makeText(context, "Response is null!", Toast.LENGTH_LONG).show()
     }
 }

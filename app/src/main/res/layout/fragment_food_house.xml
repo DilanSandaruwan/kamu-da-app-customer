@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/lytImageView"
-        android:text="Restaurant Name"
+        android:text="Helanka Foods"
         android:textSize="24sp"
         android:textStyle="bold"
         android:padding="16dp" />
@@ -48,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/textViewRestaurantName"
-        android:text="123 Main Street, City"
+        android:text="20/A, Francis Lane, Dalugama, Kelaniya"
         android:textSize="16sp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"

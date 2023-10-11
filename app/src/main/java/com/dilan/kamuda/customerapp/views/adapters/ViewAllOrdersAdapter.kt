@@ -7,6 +7,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +16,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.divider.MaterialDivider
 import com.google.android.material.textview.MaterialTextView
+import java.text.SimpleDateFormat
 
 class ViewAllOrdersAdapter(
     private val itemClickListener: OnItemClickListener,
@@ -24,6 +27,7 @@ class ViewAllOrdersAdapter(
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val orderId: MaterialTextView = view.findViewById(R.id.mtvOrderId)
         val orderDate: MaterialTextView = view.findViewById(R.id.mtvOrderDate)
+        val orderTime: MaterialTextView = view.findViewById(R.id.mtvOrderTime)
         val orderTotal: MaterialTextView = view.findViewById(R.id.mtvOrderTotal)
         val orderItemCount: MaterialTextView = view.findViewById(R.id.mtvOrderedItemCount)
         val orderStatus: MaterialTextView = view.findViewById(R.id.tvOrderStatus)
@@ -31,12 +35,14 @@ class ViewAllOrdersAdapter(
         val lytBtnToggle: RelativeLayout = view.findViewById(R.id.lytBtnToggle)
         val btnArrowUp: ImageView = view.findViewById(R.id.btnArrowUp)
         val btnArrowDown: ImageView = view.findViewById(R.id.btnArrowDown)
-        val btnOrderReject: MaterialButton = view.findViewById(R.id.btnOrderReject)
+        val btnOrderCancelOrder: MaterialButton = view.findViewById(R.id.btnOrderCancelOrder)
         val btnReOrder: MaterialButton = view.findViewById(R.id.btnReOrder)
+        val vDividerStatus: MaterialDivider = view.findViewById(R.id.verticalDivider)
+
     }
 
     interface OnItemClickListener {
-        fun itemClick(item: OrderDetail)
+        fun itemClick(itemId: Int, status: String)
     }
 
     companion object {
@@ -66,22 +72,63 @@ class ViewAllOrdersAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
         holder.orderId.text = item.id.toString()
-        holder.orderDate.text = item.date
+        SimpleDateFormat("yyyy MMM dd").format(SimpleDateFormat("yyyy-MM-dd").parse(item.date))
+            .also { holder.orderDate.text = it }
+        holder.orderTime.text = item.createdAt
         holder.orderTotal.text = "LKR ${item.total}"
         holder.orderItemCount.text = "${item.items.size} Items"
-        holder.orderStatus.text = item.status
+        holder.orderStatus.text = "${item.status.uppercase()}"
 
-        if(item.status == "pending" ){
-            holder.btnOrderReject.visibility = VISIBLE
-            holder.btnReOrder.visibility = GONE
-        } else {
-            if(item.status == "accepted"){
+        when (item.status) {
+            "pending" -> {
+                holder.btnOrderCancelOrder.visibility = VISIBLE
                 holder.btnReOrder.visibility = GONE
-            } else {
-                holder.btnReOrder.visibility = VISIBLE
+                holder.vDividerStatus.dividerColor =
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.yellow
+                    )
+
             }
-            holder.btnOrderReject.visibility = GONE
+            else -> {
+                if(item.status == "accepted"){
+                    holder.btnReOrder.visibility = GONE
+                } else {
+                    holder.btnReOrder.visibility = VISIBLE
+                }
+                holder.btnOrderCancelOrder.visibility = GONE
+                holder.vDividerStatus.dividerColor =
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.green
+                    )
+            }
         }
+
+        when (item.status) {
+            "completed" -> {
+                holder.vDividerStatus.dividerColor =
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.black
+                    )
+            }
+            "rejected" -> {
+                holder.vDividerStatus.dividerColor =
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.redish
+                    )
+            }
+            "cancelled" -> {
+                holder.vDividerStatus.dividerColor =
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        R.color.grey
+                    )
+            }
+        }
+
         // Set up child RecyclerView
         val childAdapter = ViewOrderedItemsAdapter()
         holder.rvOrderItems.layoutManager =
@@ -105,6 +152,10 @@ class ViewAllOrdersAdapter(
                 holder.btnArrowDown.visibility = VISIBLE
                 holder.rvOrderItems.visibility = GONE
             }
+        }
+
+        holder.btnOrderCancelOrder.setOnClickListener {
+            itemClickListener.itemClick(item.id, "cancelled")
         }
 
 

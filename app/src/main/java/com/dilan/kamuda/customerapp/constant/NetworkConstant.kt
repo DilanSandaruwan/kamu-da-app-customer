@@ -6,8 +6,8 @@ import com.dilan.kamuda.customerapp.mysecret.route_url
 object NetworkConstant {
 
     //const val BASE_URL = mockapi_url
-    const val BASE_URL = dongo_url
-    //const val BASE_URL = route_url
+    //const val BASE_URL = dongo_url
+    const val BASE_URL = route_url
 
     // Endpoint for login
     const val ENDPOINT_LOGIN = "login"
@@ -24,4 +24,6 @@ object NetworkConstant {
     // Endpoints for order
     const val ENDPOINT_ORDERS = "order/mylist/{id}"
     const val ENDPOINT_SAVE_ORDER = "order/save"
+    const val ENDPOINT_PUT_ORDER = "order/update/status/{id}/{status}"
+
 }

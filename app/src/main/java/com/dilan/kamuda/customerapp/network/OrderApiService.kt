@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface OrderApiService {
@@ -18,4 +19,10 @@ interface OrderApiService {
 
     @POST(NetworkConstant.ENDPOINT_SAVE_ORDER)
     suspend fun placeOrderInStore(@Body myOrder: OrderDetail): Response<OrderDetail>
+
+    @PUT(NetworkConstant.ENDPOINT_PUT_ORDER)
+    suspend fun updateOrderByIdWithStatus(
+        @Path("id") orderId: Int,
+        @Path("status") status: String
+    ): Response<OrderDetail>
 }

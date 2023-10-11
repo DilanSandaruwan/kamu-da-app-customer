@@ -25,7 +25,11 @@ class ViewOrderViewModel @Inject constructor(
     val ordersList: LiveData<List<OrderDetail>>
         get() = _ordersList
 
-    private fun getOrdersListOfCustomer(custId: Int) {
+    private val _objectHasUpdated = MutableLiveData<OrderDetail?>()
+    val objectHasUpdated: LiveData<OrderDetail?>
+        get() = _objectHasUpdated
+
+    fun getOrdersListOfCustomer(custId: Int) {
         viewModelScope.launch {
             _ordersList.postValue(mainRepository.getOrderListFromDataSource(custId))
         }
@@ -50,6 +54,13 @@ class ViewOrderViewModel @Inject constructor(
 //
 //        _ordersList.value = listOf(orderDetail)
 
+    }
+
+    fun updateOrderWithStatus(orderId: Int, status: String) {
+        viewModelScope.launch {
+            val response = mainRepository.updateOrderByIdWithStatusOnDataSource(orderId, status)
+            _objectHasUpdated.postValue(response)
+        }
     }
 
     init {

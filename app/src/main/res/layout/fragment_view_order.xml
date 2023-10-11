@@ -13,13 +13,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/black"
         tools:context=".views.fragments.order.ViewOrderFragment">
 
         <LinearLayout
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_margin="10dp"
             android:background="@color/black">
 
             <ImageButton
@@ -50,113 +50,65 @@
                 android:background="@color/transparent" />
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/toggleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <RelativeLayout
             android:layout_below="@+id/header"
-            android:shadowColor="@color/black"
-            android:outlineSpotShadowColor="@color/green"
-            app:singleSelection="true"
-            android:layout_centerHorizontal="true">
-
-            <Button
-                android:id="@+id/btnOngoingOrders"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:outlineAmbientShadowColor="@color/red"
-                android:layout_height="wrap_content"
-                android:text="Ongoing" />
-
-            <Button
-                android:id="@+id/btnPastOrders"
-                style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:background="@drawable/bg_top_curved_white"
+            android:layout_height="match_parent">
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Past Orders"
-                android:textColor="@color/black" />
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+                android:layout_marginTop="10dp"
+                android:shadowColor="@color/black"
+                android:outlineSpotShadowColor="@color/green"
+                app:singleSelection="true"
+                android:layout_centerHorizontal="true">
 
-        <LinearLayout
-            android:id="@+id/titleFoodHouse"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_below="@+id/header"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="10dp"
-            android:visibility="gone">
+                <Button
+                    android:id="@+id/btnOngoingOrders"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:outlineAmbientShadowColor="@color/red"
+                    android:layout_height="wrap_content"
+                    android:text="Ongoing" />
 
-            <RelativeLayout
+                <Button
+                    android:id="@+id/btnPastOrders"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Past Orders"
+                    android:textColor="@color/black" />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvViewOrderDetails"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="4">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/toggleButton"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="50dp"
+                android:visibility="visible" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_baseline_shopping_cart_24dp" />
-            </RelativeLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvNoOrdersYet"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:weightSum="3">
-
-                <TextView
-                    android:id="@+id/tvFoodHouseName"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="15dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Food House"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="15dp"
-                    android:layout_weight="2"
-                    android:gravity="center_vertical"
-                    android:text="Address"
-                    android:textSize="15sp"
-                    android:textStyle="normal" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvViewOrderDetails"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/toggleButton"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="50dp"
-            android:visibility="visible" />
-
-        <TextView
-            android:id="@+id/tvNoOrdersYet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/toggleButton"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="50dp"
-            android:gravity="center"
-            android:text="No orders yet."
-            android:textSize="20sp"
-            android:visibility="visible" />
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/toggleButton"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="50dp"
+                android:gravity="center"
+                android:text="No orders yet."
+                android:textSize="20sp"
+                android:visibility="visible" />
+        </RelativeLayout>
 
 
     </RelativeLayout>
