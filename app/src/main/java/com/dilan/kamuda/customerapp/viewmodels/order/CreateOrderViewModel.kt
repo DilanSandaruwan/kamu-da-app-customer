@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
-import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
+import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -42,14 +42,27 @@ class CreateOrderViewModel @Inject constructor(
         get() = _resetList
 
     private val _showLoader = MutableLiveData<Boolean>()
-    val showLoader : LiveData<Boolean> = _showLoader
+    val showLoader: LiveData<Boolean> = _showLoader
 
     fun getMenuListForMeal(meal: String) {
         viewModelScope.launch {
 
-            var list = mainRepository.getMenuListForMealFromDataSource() ?: emptyList()
+            var res = mainRepository.getMenuListForMealFromDataSource()
+            when (res) {
+                is ApiState.Success -> {
+                    _showLoader.postValue(false)
+                    convertToOrderItemsIntermediate(res.data)
+                }
 
-            convertToOrderItemsIntermediate(list)
+                is ApiState.Failure -> {
+                    _showLoader.postValue(false)
+                    convertToOrderItemsIntermediate(emptyList())
+                }
+
+                is ApiState.Loading -> {
+                    _showLoader.postValue(true)
+                }
+            }
 
         }
     }
@@ -97,7 +110,7 @@ class CreateOrderViewModel @Inject constructor(
         Log.e("Orders", "saveData: $myOrder")
         viewModelScope.launch {
             val res = mainRepository.placeOrderInDataSource(myOrder)
-            if(res!=null){
+            if (res != null) {
                 _resetList.postValue(true)
             }
         }

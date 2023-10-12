@@ -102,6 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:orientation="horizontal">
+
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/mtvOrderTime"
                         android:layout_width="match_parent"
@@ -135,6 +136,7 @@
                             android:visibility="gone" />
                     </RelativeLayout>
                 </LinearLayout>
+
                 <TextView
                     android:id="@+id/tvOrderStatus"
                     android:layout_width="wrap_content"
@@ -174,9 +176,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/teal_700"
+                android:backgroundTint="@color/ude_green"
                 android:text="Reorder"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton

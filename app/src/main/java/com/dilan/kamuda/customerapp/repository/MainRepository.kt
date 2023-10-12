@@ -6,6 +6,7 @@ import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.network.OnBoardingApiService
 import com.dilan.kamuda.customerapp.network.OrderApiService
+import com.dilan.kamuda.customerapp.network.utils.ApiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,7 +16,7 @@ class MainRepository @Inject constructor(
     private val orderApiService: OrderApiService,
 ) {
     private val TAG = "MainRepository"
-    suspend fun getMenuListForMealFromDataSource(): List<FoodMenu>? {
+    suspend fun getMenuListForMealFromDataSource(): ApiState<List<FoodMenu>> {
         return withContext(Dispatchers.IO) {
             return@withContext getResponseFromRemoteService()
         }
@@ -27,12 +28,20 @@ class MainRepository @Inject constructor(
         }
     }
 
-    private suspend fun getResponseFromRemoteService(): List<FoodMenu>? {
-        val response = orderApiService.getMenuListForMeal()
-        if (response.isSuccessful) {
-            return response.body()
+    private suspend fun getResponseFromRemoteService(): ApiState<List<FoodMenu>> {
+        return try {
+            val response = orderApiService.getMenuListForMeal()
+            if (response.isSuccessful) {
+                Log.e(TAG, "getResponseFromRemoteService: ${response.message()}")
+                ApiState.Success(response.body() ?: emptyList())
+            } else {
+                Log.e(TAG, "getResponseFromRemoteService: ${response.message()}")
+                ApiState.Failure("Error in fetching menu list")
+            }
+        } catch (exception: Exception) {
+            Log.e(TAG, "getResponseFromRemoteService: ${exception.toString()}")
+            ApiState.Failure(exception.message.toString())
         }
-        return emptyList()
     }
 
     private suspend fun getOrderListResponseFromRemoteService(id: Int): List<OrderDetail>? {
