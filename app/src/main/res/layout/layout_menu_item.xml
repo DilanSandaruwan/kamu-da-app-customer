@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/merchant_layout"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="5dp"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:addStatesFromChildren="true"
+        android:background="@drawable/bg_state_selector_outside"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical">
+
+        <com.dilan.kamuda.customerapp.util.component.RoundedImageView
+            android:id="@+id/menu_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="5dp"
+            android:src="@drawable/img_all_spices" />
+
+        <ImageView
+            android:id="@+id/edit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignTop="@+id/menu_image"
+            android:layout_alignEnd="@+id/menu_image"
+            android:layout_gravity="end"
+            android:background="@color/black"
+            android:layout_marginTop="-10dp"
+            android:layout_marginEnd="-10dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_check_circle_green_24dp" />
+
+        <ImageView
+            android:id="@+id/ivAvailability"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignStart="@+id/menu_image"
+            android:layout_alignTop="@+id/menu_image"
+            android:layout_gravity="start"
+            android:layout_marginStart="-7dp"
+            android:layout_marginTop="-7dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/img_sold_out" />
+
+        <TextView
+            android:id="@+id/tvMenuItemPrice"
+            style="@style/styleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/menu_image"
+            android:gravity="center"
+            android:maxLines="3"
+            android:padding="2dp"
+            android:text="LKR 120.00"
+            android:textColor="@color/meal_search_name_text_grey"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvMenuItemName"
+            style="@style/styleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvMenuItemPrice"
+            android:gravity="center"
+            android:maxLines="3"
+            android:padding="2dp"
+            android:textStyle="bold"
+            android:text="merchantResponse name"
+            android:textColor="@color/meal_search_name_text_grey"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

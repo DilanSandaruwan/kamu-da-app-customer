@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="styleTextView" parent="android:Widget.TextView">
+        <item name="android:textColor">@color/pin_grey</item>
+        <!--        <item name="android:fontFamily">sans-serif-condensed</item>-->
+        <item name="android:textSize">17sp</item>
+    </style>
+</resources>

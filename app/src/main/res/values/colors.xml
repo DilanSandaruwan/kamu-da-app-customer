@@ -5,6 +5,7 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="semi_transparent">#CC000000</color>
     <color name="aqua">#014759</color>
+    <color name="btn_dark_blue">#004F7F</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -18,5 +19,9 @@
     <color name="light_grey">#FAFAFA</color>
     <color name="light_blue">#DC00F80A</color>
     <color name="grey">#DC9A9A9A</color>
+    <color name="hint_color">#42000000</color>
+    <color name="pin_grey">#4f647a</color>
+    <color name="meal_search_name_text_grey">#646E75</color>
+    <color name="meal_border">#C7CAD2</color>
 
 </resources>
