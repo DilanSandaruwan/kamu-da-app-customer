@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentViewOrderBinding
 import com.dilan.kamuda.customerapp.viewmodels.order.ViewOrderViewModel
+import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.ViewAllOrdersAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,11 +26,13 @@ class ViewOrderFragment : Fragment() {
     lateinit var binding: FragmentViewOrderBinding
     private val viewModel: ViewOrderViewModel by viewModels()
     private lateinit var adapter: ViewAllOrdersAdapter
+    private lateinit var mainActivity: MainActivity
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        mainActivity = requireActivity() as MainActivity
     }
 
     override fun onCreateView(
@@ -88,6 +91,10 @@ class ViewOrderFragment : Fragment() {
                 viewModel.getOrdersListOfCustomer(12)
             else
                 showErrorPopup()
+        }
+
+        viewModel.showLoader.observe(viewLifecycleOwner){
+            mainActivity.showProgress(it)
         }
 
         binding.toggleButton.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->

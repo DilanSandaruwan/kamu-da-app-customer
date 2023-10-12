@@ -41,6 +41,8 @@ class CreateOrderViewModel @Inject constructor(
     val resetList: LiveData<Boolean>
         get() = _resetList
 
+    private val _showLoader = MutableLiveData<Boolean>()
+    val showLoader : LiveData<Boolean> = _showLoader
 
     fun getMenuListForMeal(meal: String) {
         viewModelScope.launch {

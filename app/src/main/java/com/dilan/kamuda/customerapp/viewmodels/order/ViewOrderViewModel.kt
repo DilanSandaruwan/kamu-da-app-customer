@@ -33,6 +33,9 @@ class ViewOrderViewModel @Inject constructor(
     val resetList: LiveData<Boolean>
         get() = _resetList
 
+    private val _showLoader = MutableLiveData<Boolean>()
+    val showLoader : LiveData<Boolean> = _showLoader
+
     fun getOrdersListOfCustomer(custId: Int) {
         viewModelScope.launch {
             _ordersList.postValue(mainRepository.getOrderListFromDataSource(custId))

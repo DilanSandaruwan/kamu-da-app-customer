@@ -15,6 +15,7 @@ import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
 import com.dilan.kamuda.customerapp.util.CustomDialogFragment
 import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.order.CreateOrderViewModel
+import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.CreateOrderAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -28,6 +29,12 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
     private lateinit var viewModel: CreateOrderViewModel
     private lateinit var binding: FragmentCreateOrderBinding
     private lateinit var adapter: CreateOrderAdapter
+    private lateinit var mainActivity: MainActivity
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mainActivity = requireActivity() as MainActivity
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,6 +103,10 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
 
         viewModel.resetList.observe(viewLifecycleOwner) {
             resetOrder()
+        }
+
+        viewModel.showLoader.observe(viewLifecycleOwner){
+            mainActivity.showProgress(it)
         }
 
     }

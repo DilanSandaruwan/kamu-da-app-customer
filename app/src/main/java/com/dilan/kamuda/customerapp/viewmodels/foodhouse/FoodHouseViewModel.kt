@@ -21,15 +21,21 @@ class FoodHouseViewModel @Inject constructor(
     val menuList: LiveData<List<FoodMenu>>
         get() = _menuList
 
+    private val _showLoader = MutableLiveData<Boolean>()
+    val showLoader : LiveData<Boolean> = _showLoader
+
     fun getMenuListForAll() {
+        _showLoader.value = true
         viewModelScope.launch {
 
             var list = mainRepository.getMenuListForMealFromDataSource() ?: emptyList()
 
             if (list.isEmpty()) {
                 _menuList.postValue(list)
+                _showLoader.postValue(false)
             } else {
                 _menuList.postValue(list)
+                _showLoader.postValue(false)
             }
         }
     }
