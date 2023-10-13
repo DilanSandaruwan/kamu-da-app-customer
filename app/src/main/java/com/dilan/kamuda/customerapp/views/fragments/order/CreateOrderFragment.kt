@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.views.fragments.order
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,17 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
     private lateinit var binding: FragmentCreateOrderBinding
     private lateinit var adapter: CreateOrderAdapter
     private lateinit var mainActivity: MainActivity
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("DILAN", "onResume: aayeth")
+        if (kamuDaSecurePreference.isLoadMenuForOrders(requireContext())) {
+            kamuDaSecurePreference.setLoadMenuForOrders(requireContext(), false)
+            viewModel.getMenuListForMeal()
+        }
+//        context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
+//            ?.let { viewModel.getOrdersListOfCustomer(it) }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,7 +117,16 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
             resetOrder()
         }
 
-        viewModel.showLoader.observe(viewLifecycleOwner){
+        viewModel.savedSuccessfully.observe(viewLifecycleOwner) {
+            if (it) {
+                kamuDaSecurePreference.setLoadMenuForOrders(
+                    requireContext(), false
+                )
+                viewModel.getMenuListForMeal()
+            }
+        }
+
+        viewModel.showLoader.observe(viewLifecycleOwner) {
             mainActivity.showProgress(it)
         }
 
@@ -170,6 +191,10 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
     private fun resetOrder() {
         viewModel.setCheckedItemsList(mutableListOf())
         //viewModel.getMenuListForMeal("breakfast")
+    }
+
+    companion object {
+        var kamuDaSecurePreference = KamuDaSecurePreference()
     }
 
 }

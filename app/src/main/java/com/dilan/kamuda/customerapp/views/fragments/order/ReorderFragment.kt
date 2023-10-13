@@ -185,7 +185,7 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
 
     private fun setOrderDetails(checkedItems: List<OrderItemIntermediate>) {
         var mutableList = mutableListOf<OrderItem>()
-        val custId = KamuDaSecurePreference().getCustomerID(requireContext()).toInt()
+        val custId = kamuDaSecurePreference.getCustomerID(requireContext()).toInt()
 
         for (i in checkedItems) {
             mutableList.add(OrderItem(i.name, i.price, i.quantity))
@@ -221,10 +221,14 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
     }
 
     fun goToViewOrderFromReorder(){
+        ViewOrderFragment.kamuDaSecurePreference.setLoadMyOrders(requireContext(),true)
         val action = ReorderFragmentDirections.actionReorderFragmentToViewOrderFragment2()
         view?.findNavController()?.popBackStack(R.id.reorderFragment, false)
         view?.findNavController()?.navigate(action)
 
     }
 
+    companion object {
+        var kamuDaSecurePreference = KamuDaSecurePreference()
+    }
 }

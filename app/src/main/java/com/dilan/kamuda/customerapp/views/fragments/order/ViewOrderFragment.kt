@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.views.fragments.order
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentViewOrderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.order.ViewOrderViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.ViewAllOrdersAdapter
@@ -30,6 +32,16 @@ class ViewOrderFragment : Fragment() {
     private lateinit var adapter: ViewAllOrdersAdapter
     private lateinit var mainActivity: MainActivity
 
+    override fun onResume() {
+        super.onResume()
+        Log.e("DILAN", "onResume: aayeth", )
+        if(kamuDaSecurePreference.isLoadMyOrders(requireContext())){
+            kamuDaSecurePreference.setLoadMyOrders(requireContext(),false)
+            viewModel.getOrdersListOfCustomer(kamuDaSecurePreference.getCustomerID(requireContext()).toInt())
+        }
+//        context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
+//            ?.let { viewModel.getOrdersListOfCustomer(it) }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,4 +158,7 @@ class ViewOrderFragment : Fragment() {
 
     }
 
+    companion object {
+        var kamuDaSecurePreference = KamuDaSecurePreference()
+    }
 }

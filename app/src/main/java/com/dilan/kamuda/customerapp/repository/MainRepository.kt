@@ -22,12 +22,6 @@ class MainRepository @Inject constructor(
         }
     }
 
-    suspend fun getOrderListFromDataSource(id: Int): ApiState<List<OrderDetail>?> {
-        return withContext(Dispatchers.IO) {
-            return@withContext getOrderListResponseFromRemoteService(id)
-        }
-    }
-
     private suspend fun getResponseFromRemoteService(): ApiState<List<FoodMenu>> {
         return try {
             val response = orderApiService.getMenuListForMeal()
@@ -43,6 +37,13 @@ class MainRepository @Inject constructor(
             ApiState.Failure(exception.message.toString())
         }
     }
+
+    suspend fun getOrderListFromDataSource(id: Int): ApiState<List<OrderDetail>?> {
+        return withContext(Dispatchers.IO) {
+            return@withContext getOrderListResponseFromRemoteService(id)
+        }
+    }
+
 
     private suspend fun getOrderListResponseFromRemoteService(id: Int): ApiState<List<OrderDetail>?> {
         return try {
@@ -97,7 +98,7 @@ class MainRepository @Inject constructor(
     /***
      * UPDATE the order status
      */
-    suspend fun updateOrderByIdWithStatusOnDataSource(orderId: Int, status: String): OrderDetail? {
+    suspend fun updateOrderByIdWithStatusOnDataSource(orderId: Int, status: String): ApiState<OrderDetail?> {
         return withContext(Dispatchers.IO) {
             return@withContext (updateOrderByIdWithStatusOnRemoteSource(orderId, status))
         }
@@ -106,12 +107,17 @@ class MainRepository @Inject constructor(
     private suspend fun updateOrderByIdWithStatusOnRemoteSource(
         orderId: Int,
         status: String
-    ): OrderDetail? {
-        val response = orderApiService.updateOrderByIdWithStatus(orderId, status)
-        if (response.isSuccessful) {
-            return response.body()
+    ): ApiState<OrderDetail?> {
+        return try {
+            val response = orderApiService.updateOrderByIdWithStatus(orderId, status)
+            if (response.isSuccessful) {
+                ApiState.Success(response.body())
+            } else {
+                ApiState.Failure(response.errorBody().toString())
+            }
+        } catch (exception:Exception){
+            ApiState.Failure(exception.message.toString())
         }
-        return null
     }
 
 }

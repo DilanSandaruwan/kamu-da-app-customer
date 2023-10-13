@@ -37,6 +37,11 @@ class CreateOrderViewModel @Inject constructor(
     val totalAmount: LiveData<Boolean>
         get() = _totalAmount
 
+
+    private val _savedSuccessfully = MutableLiveData<Boolean>(false)
+    val savedSuccessfully: LiveData<Boolean>
+        get() = _savedSuccessfully
+
     private val _resetList = MutableLiveData<Boolean>(false)
     val resetList: LiveData<Boolean>
         get() = _resetList
@@ -110,9 +115,24 @@ class CreateOrderViewModel @Inject constructor(
         Log.e("Orders", "saveData: $myOrder")
         viewModelScope.launch {
             val res = mainRepository.placeOrderInDataSource(myOrder)
-            if (res != null) {
-                _resetList.postValue(true)
+
+            when(res){
+                is ApiState.Success -> {
+                    _showLoader.postValue(false)
+                    if (res.data != null) {
+                        //TODO("show success message")
+                        _savedSuccessfully.postValue(true)
+                    }
+                }
+                is ApiState.Failure -> {
+                    //TODO("show failed message")
+                    _showLoader.postValue(false)
+                }
+                is ApiState.Loading -> {
+                    _showLoader.postValue(true)
+                }
             }
+
         }
     }
 
@@ -121,6 +141,6 @@ class CreateOrderViewModel @Inject constructor(
     }
 
     init {
-        getMenuListForMeal()
+        //getMenuListForMeal()
     }
 }
