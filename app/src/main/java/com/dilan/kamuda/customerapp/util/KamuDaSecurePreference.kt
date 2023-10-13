@@ -8,6 +8,7 @@ class KamuDaSecurePreference {
         private const val CUSTOMER_ID_KEY = "customer_id"
         private const val LOAD_MY_ORDERS_KEY = "load_my_orders_id"
         private const val LOAD_MENU_FOR_ORDERS_KEY = "load_menu_for_orders_id"
+        private const val IS_LOGGED_USER = "is_logged_user"
     }
 
     // Method to store a customer ID in SharedPreferences
@@ -60,5 +61,25 @@ class KamuDaSecurePreference {
         return sharedPreferences.getBoolean(LOAD_MENU_FOR_ORDERS_KEY, true) ?: true
     }
 
+    fun setUserLogged(context: Context, isLogged: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean(IS_LOGGED_USER, isLogged)
+        editor.apply()
+    }
+
+    fun isLoggedUser(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(IS_LOGGED_USER, false)
+    }
+
+    fun clearSharedPrefKeys(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.remove(LOAD_MY_ORDERS_KEY)
+        editor.remove(LOAD_MENU_FOR_ORDERS_KEY)
+
+        editor.apply()
+    }
 
 }

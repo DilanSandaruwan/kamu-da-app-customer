@@ -2,6 +2,8 @@ package com.dilan.kamuda.customerapp.views.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -26,9 +28,33 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnLogin.setOnClickListener {
             // Storing the customer ID
-            KamuDaSecurePreference().setCustomerID(this, "12");
+            kamuDaSecurePreference.setCustomerID(this, "12");
+            kamuDaSecurePreference.setUserLogged(this, true)
             val intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
         }
+
+        binding.btnContinue.setOnClickListener {
+            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+        }
+
+        initialProcess()
+    }
+
+    fun initialProcess() {
+        if (!kamuDaSecurePreference.isLoggedUser(this)) {
+            binding.btnContinue.visibility = INVISIBLE
+            binding.btnLogin.visibility = VISIBLE
+            binding.textField.visibility = VISIBLE
+        } else {
+            binding.btnContinue.visibility = VISIBLE
+            binding.btnLogin.visibility = INVISIBLE
+            binding.textField.visibility = INVISIBLE
+        }
+    }
+
+    companion object {
+        var kamuDaSecurePreference = KamuDaSecurePreference()
     }
 }

@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.ActivitySplashBinding
+import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.SplashViewModel
+import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,6 +17,17 @@ class SplashActivity : AppCompatActivity() {
 
     lateinit var binding: ActivitySplashBinding
     val viewModel: SplashViewModel by viewModels()
+
+    override fun onResume() {
+        super.onResume()
+        if (kamuDaSecurePreference.isLoggedUser(this)) {
+            val intent: Intent = Intent(this@SplashActivity, LoginActivity::class.java)
+            startActivity(intent)
+        } else {
+            val intent: Intent = Intent(this@SplashActivity, MainActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +37,6 @@ class SplashActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         initListeners()
-
     }
 
     private fun initListeners() {
@@ -32,5 +44,9 @@ class SplashActivity : AppCompatActivity() {
             val intent: Intent = Intent(this@SplashActivity, LoginActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    companion object {
+        var kamuDaSecurePreference = KamuDaSecurePreference()
     }
 }

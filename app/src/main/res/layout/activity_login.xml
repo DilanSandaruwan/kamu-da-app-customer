@@ -11,6 +11,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lytLogin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/img_dark_dish"
@@ -23,6 +24,8 @@
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:hint="Email Address"
+            android:visibility="invisible"
+            app:hintTextColor="@color/yellow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.493"
@@ -32,7 +35,8 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -41,6 +45,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Login"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.907"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textField" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnContinue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:drawableEnd="@drawable/ic_check_circle_green_24dp"
+            android:text="Continue"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.907"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,6 +72,7 @@
             android:layout_marginTop="8dp"
             android:text="Create a new account?"
             android:textSize="15sp"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.076"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,9 +84,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Register"
-            android:textStyle="bold"
             android:textColor="?attr/colorPrimary"
             android:textSize="15sp"
+            android:textStyle="bold"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.076"
             app:layout_constraintStart_toEndOf="@+id/lblCreateNew"

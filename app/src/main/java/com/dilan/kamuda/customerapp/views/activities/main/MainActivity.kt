@@ -35,6 +35,7 @@ class MainActivity : ActBase() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
+        kamuDaSecurePreference.clearSharedPrefKeys(this)
         viewModel.showLoader.observe(this, Observer {
             showProgress(it)
         })

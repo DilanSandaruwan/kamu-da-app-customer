@@ -34,10 +34,15 @@ class ViewOrderFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.e("DILAN", "onResume: aayeth", )
-        if(kamuDaSecurePreference.isLoadMyOrders(requireContext())){
-            kamuDaSecurePreference.setLoadMyOrders(requireContext(),false)
-            viewModel.getOrdersListOfCustomer(kamuDaSecurePreference.getCustomerID(requireContext()).toInt())
+        Log.e(
+            "DILAN",
+            "onResume: aayeth ${kamuDaSecurePreference.isLoadMyOrders(requireContext())}",
+        )
+        if (kamuDaSecurePreference.isLoadMyOrders(requireContext())) {
+            kamuDaSecurePreference.setLoadMyOrders(requireContext(), false)
+            viewModel.getOrdersListOfCustomer(
+                kamuDaSecurePreference.getCustomerID(requireContext()).toInt()
+            )
         }
 //        context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
 //            ?.let { viewModel.getOrdersListOfCustomer(it) }
@@ -73,7 +78,7 @@ class ViewOrderFragment : Fragment() {
             override fun itemClick(itemId: Int, status: String) {
                 viewModel.updateOrderWithStatus(itemId, status)
             }
-        },object : ViewAllOrdersAdapter.OnReorderClickListener{
+        }, object : ViewAllOrdersAdapter.OnReorderClickListener {
             override fun reorderClick(item: OrderDetail) {
                 goToReorderSelectedOrder(item)
             }
@@ -113,7 +118,7 @@ class ViewOrderFragment : Fragment() {
                 showErrorPopup()
         }
 
-        viewModel.showLoader.observe(viewLifecycleOwner){
+        viewModel.showLoader.observe(viewLifecycleOwner) {
             mainActivity.showProgress(it)
         }
 
@@ -152,8 +157,10 @@ class ViewOrderFragment : Fragment() {
         Toast.makeText(context, "Response is null!", Toast.LENGTH_LONG).show()
     }
 
-    fun goToReorderSelectedOrder(selectedOrderDetail: OrderDetail){
-        val action = ViewOrderFragmentDirections.actionViewOrderFragment2ToReorderFragment(selectedOrderDetail)
+    fun goToReorderSelectedOrder(selectedOrderDetail: OrderDetail) {
+        val action = ViewOrderFragmentDirections.actionViewOrderFragment2ToReorderFragment(
+            selectedOrderDetail
+        )
         view?.findNavController()?.navigate(action)
 
     }

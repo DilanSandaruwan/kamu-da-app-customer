@@ -119,9 +119,8 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
 
         viewModel.savedSuccessfully.observe(viewLifecycleOwner) {
             if (it) {
-                kamuDaSecurePreference.setLoadMenuForOrders(
-                    requireContext(), false
-                )
+                kamuDaSecurePreference.setLoadMenuForOrders(requireContext(), false)
+                kamuDaSecurePreference.setLoadMyOrders(requireContext(), true)
                 viewModel.getMenuListForMeal()
             }
         }

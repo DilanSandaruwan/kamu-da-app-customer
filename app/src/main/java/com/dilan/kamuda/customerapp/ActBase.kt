@@ -3,14 +3,13 @@ package com.dilan.kamuda.customerapp
 import android.view.View
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
-import dagger.hilt.android.AndroidEntryPoint
+import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 
 /***
- * TODO:
  * use as a abstract class for the app features
  */
-abstract class ActBase : AppCompatActivity(){
-    open fun showProgress(show:Boolean){
+abstract class ActBase : AppCompatActivity() {
+    open fun showProgress(show: Boolean) {
         val progressBarHolder = findViewById<RelativeLayout>(R.id.rippleHolder)
         if (show) {
             if (!progressBarHolder.isShown) {
@@ -21,5 +20,9 @@ abstract class ActBase : AppCompatActivity(){
                 progressBarHolder.visibility = View.GONE
             }
         }
+    }
+
+    companion object {
+        var kamuDaSecurePreference = KamuDaSecurePreference()
     }
 }
