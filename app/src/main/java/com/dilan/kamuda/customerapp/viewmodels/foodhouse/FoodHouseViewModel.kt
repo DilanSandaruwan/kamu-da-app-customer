@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
+import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,10 @@ class FoodHouseViewModel @Inject constructor(
     private val _menuList = MutableLiveData<List<FoodMenu>>()
     val menuList: LiveData<List<FoodMenu>>
         get() = _menuList
+
+    private val _latestOrder = MutableLiveData<OrderDetail?>()
+    val latestOrder: LiveData<OrderDetail?>
+        get() = _latestOrder
 
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean> = _showLoader
@@ -52,19 +57,32 @@ class FoodHouseViewModel @Inject constructor(
         }
     }
 
-//    fun findTodaysLectureList() {
-//        _lectureListResult.value = Result.Loading
-//        viewModelScope.launch {
-//            val result: Result<List<Lecture>> = lectureRepo.findTodaysLectureList()
-//            _lectureListResult.value = result
-//            when (result) {
-//                is Result.Success<*> -> {
-//                    lectureListUiState.loadLectureList((result as Result.Success<List<Lecture>>).data)
-//                }
-//                else -> {lectureListUiState.loadLectureList(emptyList())}
-//            }
-//        }
-//    }
+    fun getLatestOrderOfCustomer(custId: Int) {
+        viewModelScope.launch {
+            //_showLoader.postValue(true)
+            val res = mainRepository.getOrderListFromDataSource(custId)
+            when (res) {
+                is ApiState.Success -> {
+                    // _showLoader.postValue(false)
+                    if (res.data != null) {
+                        _latestOrder.postValue(res.data.maxByOrNull {
+                            it.id
+                        })
+                    } else {
+                        _latestOrder.postValue(null)
+                    }
+                }
+
+                is ApiState.Failure -> {
+                    //_showLoader.postValue(false)
+                }
+
+                is ApiState.Loading -> {
+                    //_showLoader.postValue(true)
+                }
+            }
+        }
+    }
 
     init {
         getMenuListForAll()

@@ -4,6 +4,7 @@ import com.dilan.kamuda.customerapp.constant.NetworkConstant.BASE_URL
 import com.dilan.kamuda.customerapp.network.OnBoardingApiService
 import com.dilan.kamuda.customerapp.network.OrderApiService
 import com.dilan.kamuda.customerapp.repository.MainRepository
+import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +31,7 @@ object NetworkModule {
      */
     @Singleton
     @Provides
-    fun provideConverterFactory(): Converter.Factory{
+    fun provideConverterFactory(): Converter.Factory {
         return GsonConverterFactory.create()
     }
 
@@ -58,9 +59,9 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
-        baseUrl:String,
+        baseUrl: String,
         converterFactory: Converter.Factory
-    ):Retrofit{
+    ): Retrofit {
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(converterFactory)
@@ -74,6 +75,7 @@ object NetworkModule {
     fun provideOnBoardingApiService(retrofit: Retrofit): OnBoardingApiService {
         return retrofit.create(OnBoardingApiService::class.java)
     }
+
     @Singleton
     @Provides
     fun provideOrderApiService(retrofit: Retrofit): OrderApiService {
@@ -82,8 +84,17 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideMainRepository(onBoardingApiService: OnBoardingApiService,orderApiService: OrderApiService): MainRepository {
-        return MainRepository(onBoardingApiService,orderApiService)
+    fun provideMainRepository(
+        onBoardingApiService: OnBoardingApiService,
+        orderApiService: OrderApiService
+    ): MainRepository {
+        return MainRepository(onBoardingApiService, orderApiService)
+    }
+
+    @Singleton
+    @Provides
+    fun provideKamuDaSecurePreference(): KamuDaSecurePreference {
+        return KamuDaSecurePreference()
     }
 
 }

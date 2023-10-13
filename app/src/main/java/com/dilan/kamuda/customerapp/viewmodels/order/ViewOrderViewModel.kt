@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -34,44 +35,31 @@ class ViewOrderViewModel @Inject constructor(
         get() = _resetList
 
     private val _showLoader = MutableLiveData<Boolean>()
-    val showLoader : LiveData<Boolean> = _showLoader
+    val showLoader: LiveData<Boolean> = _showLoader
 
     fun getOrdersListOfCustomer(custId: Int) {
         viewModelScope.launch {
-            _ordersList.postValue(mainRepository.getOrderListFromDataSource(custId))
+            val res = mainRepository.getOrderListFromDataSource(custId)
+            when (res) {
+                is ApiState.Success -> {
+                    _showLoader.postValue(false)
+                    if (res.data != null) {
+                        _ordersList.postValue(res.data!!)
+                    } else {
+                        _ordersList.postValue(emptyList())
+                    }
+                }
+
+                is ApiState.Failure -> {
+                    _showLoader.postValue(false)
+                }
+
+                is ApiState.Loading -> {
+                    _showLoader.postValue(true)
+                }
+            }
         }
     }
-
-    private fun getOrdersList() {
-
-//        val orderItems = listOf(
-//            OrderItem( "Burger", 8.99,2 ),
-//            OrderItem( "Fries", 3.99,1 ),
-//            OrderItem("Soda", 1.99,3 ),
-//        )
-//
-//        val orderDetail = OrderDetail(
-//            orderId = 12345,
-//            createdAt = "2023-08-28T12:34:56Z",
-//            meal = "Lunch",
-//            status = "Processing",
-//            total = 20.96,
-//            items = orderItems
-//        )
-//
-//        _ordersList.value = listOf(orderDetail)
-
-    }
-
-//    fun saveData(myOrder: OrderDetail) {
-//        Log.e("Orders", "saveData: $myOrder")
-//        viewModelScope.launch {
-//            val res = mainRepository.placeOrderInDataSource(myOrder)
-//            if (res != null) {
-//                _resetList.postValue(true)
-//            }
-//        }
-//    }
 
     fun updateOrderWithStatus(orderId: Int, status: String) {
         viewModelScope.launch {

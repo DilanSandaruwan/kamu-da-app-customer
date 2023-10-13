@@ -22,7 +22,7 @@ class MainRepository @Inject constructor(
         }
     }
 
-    suspend fun getOrderListFromDataSource(id: Int): List<OrderDetail>? {
+    suspend fun getOrderListFromDataSource(id: Int): ApiState<List<OrderDetail>?> {
         return withContext(Dispatchers.IO) {
             return@withContext getOrderListResponseFromRemoteService(id)
         }
@@ -44,17 +44,16 @@ class MainRepository @Inject constructor(
         }
     }
 
-    private suspend fun getOrderListResponseFromRemoteService(id: Int): List<OrderDetail>? {
-        try {
+    private suspend fun getOrderListResponseFromRemoteService(id: Int): ApiState<List<OrderDetail>?> {
+        return try {
             val response = orderApiService.getOrdersList(id)
             if (response.isSuccessful) {
                 Log.e(TAG, "getOrderListResponseFromRemoteService: ${response.body()}")
-                return response.body()
-            }
-            return emptyList()
+                ApiState.Success(response.body())
+            } else ApiState.Failure(response.message())
         } catch (e: Exception) {
             Log.e(TAG, "getOrderListResponseFromRemoteService: ${e.message}")
-            return emptyList()
+            ApiState.Failure(e.message.toString())
         }
 
     }
