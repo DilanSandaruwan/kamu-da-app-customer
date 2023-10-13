@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat
 
 class ViewAllOrdersAdapter(
     private val itemClickListener: OnItemClickListener,
+    private val reorderClickListener: OnReorderClickListener,
 ) : ListAdapter<OrderDetail, ViewAllOrdersAdapter.ViewHolder>(diff_util) {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -45,8 +46,8 @@ class ViewAllOrdersAdapter(
         fun itemClick(itemId: Int, status: String)
     }
 
-    interface OnReOrderClickListener {
-        fun ReOrderClick(item: OrderDetail)
+    interface OnReorderClickListener {
+        fun reorderClick(item: OrderDetail)
     }
 
     companion object {
@@ -163,6 +164,10 @@ class ViewAllOrdersAdapter(
 
         holder.btnOrderCancelOrder.setOnClickListener {
             itemClickListener.itemClick(item.id, "cancelled")
+        }
+
+        holder.btnReOrder.setOnClickListener {
+            reorderClickListener.reorderClick(item)
         }
 
 

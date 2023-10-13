@@ -16,11 +16,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateOrderViewModel @Inject constructor(
+class ReorderViewModel @Inject constructor(
     private val mainRepository: MainRepository,
     application: Application
-) : AndroidViewModel(application) {
-
+) : AndroidViewModel(application)  {
     private val _menuList = MutableLiveData<List<OrderItemIntermediate>>()
     val menuList: LiveData<List<OrderItemIntermediate>>
         get() = _menuList
@@ -40,6 +39,10 @@ class CreateOrderViewModel @Inject constructor(
     private val _resetList = MutableLiveData<Boolean>(false)
     val resetList: LiveData<Boolean>
         get() = _resetList
+
+    private val _savedSuccessfully = MutableLiveData<Boolean>(false)
+    val savedSuccessfully: LiveData<Boolean>
+        get() = _savedSuccessfully
 
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean> = _showLoader
@@ -102,22 +105,30 @@ class CreateOrderViewModel @Inject constructor(
         _checkedItems.value = updatedCheckedItems
     }
 
-    private fun placeOrder() {
-
-    }
-
     fun saveData(myOrder: OrderDetail) {
         Log.e("Orders", "saveData: $myOrder")
         viewModelScope.launch {
+            _showLoader.postValue(true)
             val res = mainRepository.placeOrderInDataSource(myOrder)
-            if (res != null) {
-                _resetList.postValue(true)
+            when(res){
+                is ApiState.Success -> {
+                    _showLoader.postValue(false)
+                    if (res.data != null) {
+                        //TODO("show success message")
+                        _savedSuccessfully.postValue(true)
+                    }
+                }
+                is ApiState.Failure -> {
+                    //TODO("show failed message")
+                    _showLoader.postValue(false)
+                    _resetList.postValue(true)
+                }
+                is ApiState.Loading -> {
+                    _showLoader.postValue(true)
+                }
             }
-        }
-    }
 
-    fun calculateTotal() {
-        _totalAmount.value = true
+        }
     }
 
     init {

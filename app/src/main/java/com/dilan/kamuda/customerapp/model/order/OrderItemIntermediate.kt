@@ -26,4 +26,10 @@ data class OrderItemIntermediate(
     override fun hashCode(): Int {
         return image?.contentHashCode() ?: 0
     }
+
+    fun updateQuantityBy(orderItem: OrderItem) {
+        if (this.name == orderItem.name) {
+            this.quantity += orderItem.quantity
+        }
+    }
 }

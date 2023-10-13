@@ -11,10 +11,12 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentViewOrderBinding
+import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.viewmodels.order.ViewOrderViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.ViewAllOrdersAdapter
@@ -59,7 +61,13 @@ class ViewOrderFragment : Fragment() {
             override fun itemClick(itemId: Int, status: String) {
                 viewModel.updateOrderWithStatus(itemId, status)
             }
+        },object : ViewAllOrdersAdapter.OnReorderClickListener{
+            override fun reorderClick(item: OrderDetail) {
+                goToReorderSelectedOrder(item)
+            }
+
         })
+
 
         binding.rvViewOrderDetails.also {
             it.layoutManager = _layoutManager
@@ -128,39 +136,14 @@ class ViewOrderFragment : Fragment() {
         }
     }
 
-    //    private fun setOrderDetails(checkedItems: List<OrderItemIntermediate>) {
-//        var mutableList = mutableListOf<OrderItem>()
-//        val custId = KamuDaSecurePreference().getCustomerID(requireContext()).toInt()
-//
-//        for (i in checkedItems) {
-//            mutableList.add(OrderItem(i.name, i.price, i.quantity, i.status))
-//        }
-//        val list = mutableList
-//        val myOrder =
-//            OrderDetail(
-//                -1,
-//                custId,
-//                checkedItems.sumOf { it.price * it.quantity }.toDouble(),
-//                getThisDate(),
-//                "pending",
-//                getThisTime(),
-//                list,
-//            )
-//
-//        viewModel.saveData(myOrder)
-//    }
-//
-//    private fun getThisTime(): String {
-//        val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-//        return sdf.format(Calendar.getInstance().time)
-//    }
-//
-//    private fun getThisDate(): String {
-//        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-//        return sdf.format(Calendar.getInstance().time)
-//    }
-
     private fun showErrorPopup() {
         Toast.makeText(context, "Response is null!", Toast.LENGTH_LONG).show()
     }
+
+    fun goToReorderSelectedOrder(selectedOrderDetail: OrderDetail){
+        val action = ViewOrderFragmentDirections.actionViewOrderFragment2ToReorderFragment(selectedOrderDetail)
+        view?.findNavController()?.navigate(action)
+
+    }
+
 }

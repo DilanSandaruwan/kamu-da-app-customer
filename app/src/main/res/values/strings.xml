@@ -5,6 +5,7 @@
     <string name="title_new_order">New Order</string>
     <string name="title_my_order">My Order</string>
     <string name="title_make_order">Make Order</string>
+    <string name="title_re_order">Re-Order</string>
     <string name="date_for_order">2023-09-21</string>
     <string name="meal_name">Breakfast</string>
     <string name="place_order">Place Order</string>

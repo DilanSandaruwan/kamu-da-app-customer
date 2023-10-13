@@ -58,20 +58,26 @@ class MainRepository @Inject constructor(
 
     }
 
-    suspend fun placeOrderInDataSource(myOrder: OrderDetail): OrderDetail? {
+    suspend fun placeOrderInDataSource(myOrder: OrderDetail): ApiState<OrderDetail?> {
         return withContext(Dispatchers.IO) {
             return@withContext placeOrderInRemoteService(myOrder)
         }
     }
 
-    private suspend fun placeOrderInRemoteService(myOrder: OrderDetail): OrderDetail? {
-        val response = orderApiService.placeOrderInStore(myOrder)
-        if (response.isSuccessful) {
-            Log.e(TAG, "placeOrderInRemoteService: success: ${response.body()}")
-            return response.body()
+    private suspend fun placeOrderInRemoteService(myOrder: OrderDetail): ApiState<OrderDetail?> {
+        return try {
+            val response = orderApiService.placeOrderInStore(myOrder)
+            if (response.isSuccessful) {
+                Log.e(TAG, "placeOrderInRemoteService: success: ${response.body()}")
+                ApiState.Success(response.body())
+            } else {
+                Log.e(TAG, "placeOrderInRemoteService: success: ${response.body()}")
+                ApiState.Failure("Response failed")
+            }
+        } catch (exception: Exception) {
+            Log.e(TAG, "placeOrderInRemoteService: failure: ${exception.message}")
+            ApiState.Failure(exception.message.toString())
         }
-        Log.e(TAG, "placeOrderInRemoteService: failure: ${response.body()}")
-        return null
     }
 
     suspend fun getFoodHouseDetailsFromDataSource(): FoodHouse? {
