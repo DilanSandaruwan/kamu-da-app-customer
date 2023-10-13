@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,23 +50,32 @@ class CreateOrderViewModel @Inject constructor(
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean> = _showLoader
 
+    private val _showErrorPopup = MutableLiveData<KamuDaPopup>()
+    val showErrorPopup: LiveData<KamuDaPopup> = _showErrorPopup
+
     fun getMenuListForMeal() {
         viewModelScope.launch {
 
             var res = mainRepository.getMenuListForMealFromDataSource()
             when (res) {
                 is ApiState.Success -> {
-                    _showLoader.postValue(false)
                     convertToOrderItemsIntermediate(res.data)
                 }
 
                 is ApiState.Failure -> {
-                    _showLoader.postValue(false)
+                    val kamuDaPopup = KamuDaPopup(
+                        "Error",
+                        "Failed to load the menu list",
+                        "",
+                        "Close",
+                        2
+                    )
+                    _showErrorPopup.postValue(kamuDaPopup)
                     convertToOrderItemsIntermediate(emptyList())
                 }
 
                 is ApiState.Loading -> {
-                    _showLoader.postValue(true)
+
                 }
             }
 
@@ -107,27 +117,31 @@ class CreateOrderViewModel @Inject constructor(
         _checkedItems.value = updatedCheckedItems
     }
 
-    private fun placeOrder() {
-
-    }
-
     fun saveData(myOrder: OrderDetail) {
         Log.e("Orders", "saveData: $myOrder")
         viewModelScope.launch {
             val res = mainRepository.placeOrderInDataSource(myOrder)
 
-            when(res){
+            when (res) {
                 is ApiState.Success -> {
                     _showLoader.postValue(false)
                     if (res.data != null) {
-                        //TODO("show success message")
                         _savedSuccessfully.postValue(true)
                     }
                 }
+
                 is ApiState.Failure -> {
-                    //TODO("show failed message")
+                    val kamuDaPopup = KamuDaPopup(
+                        "Error",
+                        "Failed to make the order",
+                        "",
+                        "Close",
+                        2
+                    )
+                    _showErrorPopup.postValue(kamuDaPopup)
                     _showLoader.postValue(false)
                 }
+
                 is ApiState.Loading -> {
                     _showLoader.postValue(true)
                 }

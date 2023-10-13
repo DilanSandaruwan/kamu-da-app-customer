@@ -20,6 +20,7 @@ import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentFoodHouseBinding
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.foodhouse.FoodHouseViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
@@ -81,7 +82,20 @@ class FoodHouseFragment : Fragment() {
         }
 
         viewModel.menuList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+            val kamuDaPopup = KamuDaPopup(
+                "Success",
+                "Successfully loaded the menu list",
+                "",
+                "Close",
+                1
+            )
+            val dialogFragment = mainActivity.showErrorPopup(kamuDaPopup).apply {
+                setNegativeActionListener {
+                    adapter.submitList(it)
+                }
+            }
+            dialogFragment.show(childFragmentManager, "custom_dialog")
+
         }
 
         viewModel.showLoader.observe(viewLifecycleOwner) {
@@ -203,7 +217,6 @@ class FoodHouseFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        //latestOrderDetail = mainActivity.latestOrderDetail
         context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
             ?.let { viewModel.getLatestOrderOfCustomer(it) }
     }

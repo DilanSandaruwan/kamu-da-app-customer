@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
@@ -32,12 +33,11 @@ class ViewOrderViewModel @Inject constructor(
     val objectHasUpdated: LiveData<OrderDetail?>
         get() = _objectHasUpdated
 
-    private val _resetList = MutableLiveData<Boolean>(false)
-    val resetList: LiveData<Boolean>
-        get() = _resetList
-
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean> = _showLoader
+
+    private val _showErrorPopup = MutableLiveData<KamuDaPopup>()
+    val showErrorPopup: LiveData<KamuDaPopup> = _showErrorPopup
 
     fun getOrdersListOfCustomer(custId: Int) {
         viewModelScope.launch {
@@ -53,6 +53,14 @@ class ViewOrderViewModel @Inject constructor(
                 }
 
                 is ApiState.Failure -> {
+                    val kamuDaPopup = KamuDaPopup(
+                        "Error",
+                        res.msg,
+                        "",
+                        "Close",
+                        2
+                    )
+                    _showErrorPopup.postValue(kamuDaPopup)
                     _showLoader.postValue(false)
                 }
 
@@ -67,17 +75,17 @@ class ViewOrderViewModel @Inject constructor(
         viewModelScope.launch {
             _showLoader.postValue(true)
             val response = mainRepository.updateOrderByIdWithStatusOnDataSource(orderId, status)
-            when(response){
+            when (response) {
                 is ApiState.Success -> {
-                    //TODO("Show success message")
                     _showLoader.postValue(false)
                     _objectHasUpdated.postValue(response.data)
                 }
+
                 is ApiState.Failure -> {
-                    //TODO("Show failed message")
                     _objectHasUpdated.postValue(null)
                     _showLoader.postValue(false)
                 }
+
                 is ApiState.Loading -> {
                     _showLoader.postValue(true)
                 }

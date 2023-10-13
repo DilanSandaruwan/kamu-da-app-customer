@@ -1,28 +1,25 @@
 package com.dilan.kamuda.customerapp.views.fragments.order
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dilan.kamuda.customerapp.R
-import com.dilan.kamuda.customerapp.databinding.FragmentCreateOrderBinding
 import com.dilan.kamuda.customerapp.databinding.FragmentReorderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.util.CustomDialogFragment
 import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
-import com.dilan.kamuda.customerapp.viewmodels.order.CreateOrderViewModel
 import com.dilan.kamuda.customerapp.viewmodels.order.ReorderViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
-import com.dilan.kamuda.customerapp.views.adapters.CreateOrderAdapter
 import com.dilan.kamuda.customerapp.views.adapters.ReorderAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -104,18 +101,24 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
         }
 
         viewModel.menuList.observe(viewLifecycleOwner) { latestList ->
-            if(selectedOrderDetail != null){
-                adapter.submitList(updateQuantityInOriginalItemsList(selectedOrderDetail!!.items,latestList))
+            if (selectedOrderDetail != null) {
+                adapter.submitList(
+                    updateQuantityInOriginalItemsList(
+                        selectedOrderDetail!!.items,
+                        latestList
+                    )
+                )
             }
         }
 
         viewModel.checkedItems.observe(viewLifecycleOwner) { it ->
             if (it.size > 0) {
                 binding.tvTotal.text = it.sumOf { it.price * it.quantity }.toString()
+                binding.btnPlaceOrder.isEnabled = !it.any { it.quantity == 0 }
             } else {
                 binding.tvTotal.text = "0.00"
+                binding.btnPlaceOrder.isEnabled = false
             }
-            binding.btnPlaceOrder.isEnabled = !it.any { it.quantity == 0 }
             adapter.setCheckedItems(it)
         }
 
@@ -124,18 +127,39 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
         }
 
         viewModel.resetList.observe(viewLifecycleOwner) {
-            if(it){
+            if (it) {
                 resetOrder()
             }
         }
 
         viewModel.savedSuccessfully.observe(viewLifecycleOwner) {
-            if(it){
-                goToViewOrderFromReorder()
+            if (it) {
+                CreateOrderFragment.kamuDaSecurePreference.setLoadMenuForOrders(
+                    requireContext(),
+                    true
+                )
+                CreateOrderFragment.kamuDaSecurePreference.setLoadMyOrders(requireContext(), true)
+                val kamuDaPopup = KamuDaPopup(
+                    "Success",
+                    "Successfully saved the order",
+                    "",
+                    "Close",
+                    1
+                )
+                val dialogFragment = mainActivity.showErrorPopup(kamuDaPopup).apply {
+                    setNegativeActionListener {
+                        goToViewOrderFromReorder()
+                    }
+                }
+                dialogFragment.show(childFragmentManager, "custom_dialog")
             }
         }
 
-        viewModel.showLoader.observe(viewLifecycleOwner){
+        viewModel.showErrorPopup.observe(viewLifecycleOwner) {
+            showErrorPopup(it)
+        }
+
+        viewModel.showLoader.observe(viewLifecycleOwner) {
             mainActivity.showProgress(it)
         }
 
@@ -150,7 +174,7 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
 
         for (selectedItem in selectedItemsList) {
             for (item in originalItemsList) {
-                if (item.name == selectedItem.name){
+                if (item.name == selectedItem.name) {
                     updatedItemsList.add(item)
                 }
             }
@@ -217,10 +241,13 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
 
     private fun resetOrder() {
         viewModel.setCheckedItemsList(mutableListOf())
-        //viewModel.getMenuListForMeal("breakfast")
     }
 
-    fun goToViewOrderFromReorder(){
+    private fun showErrorPopup(kamuDaPopup: KamuDaPopup) {
+        mainActivity.showErrorPopup(kamuDaPopup).show(childFragmentManager, "custom_dialog")
+    }
+
+    fun goToViewOrderFromReorder() {
         ViewOrderFragment.kamuDaSecurePreference.setLoadMyOrders(requireContext(),true)
         val action = ReorderFragmentDirections.actionReorderFragmentToViewOrderFragment2()
         view?.findNavController()?.popBackStack(R.id.reorderFragment, false)

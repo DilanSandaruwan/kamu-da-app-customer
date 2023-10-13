@@ -13,6 +13,7 @@ import com.dilan.kamuda.customerapp.databinding.FragmentCreateOrderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.util.CustomDialogFragment
 import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.order.CreateOrderViewModel
@@ -102,10 +103,11 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         viewModel.checkedItems.observe(viewLifecycleOwner) { it ->
             if (it.size > 0) {
                 binding.tvTotal.text = it.sumOf { it.price * it.quantity }.toString()
+                binding.btnPlaceOrder.isEnabled = !it.any { it.quantity == 0 }
             } else {
                 binding.tvTotal.text = "0.00"
+                binding.btnPlaceOrder.isEnabled = false
             }
-            binding.btnPlaceOrder.isEnabled = !it.any { it.quantity == 0 }
             adapter.setCheckedItems(it)
         }
 
@@ -121,8 +123,24 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
             if (it) {
                 kamuDaSecurePreference.setLoadMenuForOrders(requireContext(), false)
                 kamuDaSecurePreference.setLoadMyOrders(requireContext(), true)
-                viewModel.getMenuListForMeal()
+                val kamuDaPopup = KamuDaPopup(
+                    "Success",
+                    "Successfully saved the order",
+                    "",
+                    "Close",
+                    1
+                )
+                val dialogFragment = mainActivity.showErrorPopup(kamuDaPopup).apply {
+                    setNegativeActionListener {
+                        viewModel.getMenuListForMeal()
+                    }
+                }
+                dialogFragment.show(childFragmentManager, "custom_dialog")
             }
+        }
+
+        viewModel.showErrorPopup.observe(viewLifecycleOwner) {
+            showErrorPopup(it)
         }
 
         viewModel.showLoader.observe(viewLifecycleOwner) {
@@ -189,7 +207,10 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
 
     private fun resetOrder() {
         viewModel.setCheckedItemsList(mutableListOf())
-        //viewModel.getMenuListForMeal("breakfast")
+    }
+
+    private fun showErrorPopup(kamuDaPopup: KamuDaPopup) {
+        mainActivity.showErrorPopup(kamuDaPopup).show(childFragmentManager, "custom_dialog")
     }
 
     companion object {

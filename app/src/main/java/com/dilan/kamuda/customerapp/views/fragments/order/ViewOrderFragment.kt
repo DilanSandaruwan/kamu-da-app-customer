@@ -8,7 +8,6 @@ import android.view.View.GONE
 import android.view.View.NO_ID
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentViewOrderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
+import com.dilan.kamuda.customerapp.util.ResponseHandlingDialogFragment
 import com.dilan.kamuda.customerapp.viewmodels.order.ViewOrderViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.ViewAllOrdersAdapter
@@ -112,14 +113,35 @@ class ViewOrderFragment : Fragment() {
         }
 
         viewModel.objectHasUpdated.observe(viewLifecycleOwner) {
-            if (it != null)
+            if (it != null) {
+                val kamuDaPopup = KamuDaPopup(
+                    "Success",
+                    "Successfully updated the status",
+                    "",
+                    "Close",
+                    1
+                )
+                showErrorPopup(kamuDaPopup)
                 viewModel.getOrdersListOfCustomer(12)
-            else
-                showErrorPopup()
+            } else {
+                val kamuDaPopup = KamuDaPopup(
+                    "Error",
+                    "Failed to update the status",
+                    "",
+                    "Close",
+                    2
+                )
+                showErrorPopup(kamuDaPopup)
+            }
+
         }
 
         viewModel.showLoader.observe(viewLifecycleOwner) {
             mainActivity.showProgress(it)
+        }
+
+        viewModel.showErrorPopup.observe(viewLifecycleOwner) {
+            showErrorPopup(it)
         }
 
         binding.toggleButton.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
@@ -153,8 +175,15 @@ class ViewOrderFragment : Fragment() {
         }
     }
 
-    private fun showErrorPopup() {
-        Toast.makeText(context, "Response is null!", Toast.LENGTH_LONG).show()
+    private fun showErrorPopup(kamuDaPopup: KamuDaPopup) {
+        val dialogFragment = ResponseHandlingDialogFragment.newInstance(
+            title = kamuDaPopup.title,
+            message = kamuDaPopup.message,
+            positiveButtonText = kamuDaPopup.positiveButtonText,
+            negativeButtonText = kamuDaPopup.negativeButtonText,
+            type = kamuDaPopup.type,
+        )
+        dialogFragment.show(childFragmentManager, "custom_dialog")
     }
 
     fun goToReorderSelectedOrder(selectedOrderDetail: OrderDetail) {

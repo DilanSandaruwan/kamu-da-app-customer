@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,23 +48,33 @@ class ReorderViewModel @Inject constructor(
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean> = _showLoader
 
+    private val _showErrorPopup = MutableLiveData<KamuDaPopup>()
+    val showErrorPopup: LiveData<KamuDaPopup> = _showErrorPopup
+
+
     fun getMenuListForMeal() {
         viewModelScope.launch {
 
             var res = mainRepository.getMenuListForMealFromDataSource()
             when (res) {
                 is ApiState.Success -> {
-                    _showLoader.postValue(false)
                     convertToOrderItemsIntermediate(res.data)
                 }
 
                 is ApiState.Failure -> {
-                    _showLoader.postValue(false)
+                    val kamuDaPopup = KamuDaPopup(
+                        "Error",
+                        "Failed to load the menu list",
+                        "",
+                        "Close",
+                        2
+                    )
+                    _showErrorPopup.postValue(kamuDaPopup)
                     convertToOrderItemsIntermediate(emptyList())
                 }
 
                 is ApiState.Loading -> {
-                    _showLoader.postValue(true)
+
                 }
             }
 
@@ -119,7 +130,14 @@ class ReorderViewModel @Inject constructor(
                     }
                 }
                 is ApiState.Failure -> {
-                    //TODO("show failed message")
+                    val kamuDaPopup = KamuDaPopup(
+                        "Error",
+                        "Failed to make the order",
+                        "",
+                        "Close",
+                        2
+                    )
+                    _showErrorPopup.postValue(kamuDaPopup)
                     _showLoader.postValue(false)
                     _resetList.postValue(true)
                 }
