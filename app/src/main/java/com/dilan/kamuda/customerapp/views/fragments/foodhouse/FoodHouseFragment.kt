@@ -1,5 +1,9 @@
 package com.dilan.kamuda.customerapp.views.fragments.foodhouse
 
+import android.Manifest.permission
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +14,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -39,6 +45,8 @@ class FoodHouseFragment : Fragment() {
     private lateinit var adapter: ViewAllMealsAdapter
     private var latestOrderDetail: OrderDetail? = null
     private lateinit var mainActivity: MainActivity
+
+    private val REQUEST_CALL_PERMISSION = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,34 +84,87 @@ class FoodHouseFragment : Fragment() {
             it.adapter = adapter
         }
 
+        binding.imageCall.setOnClickListener {
+            makePhoneCall()
+        }
+
         viewModel.latestOrder.observe(viewLifecycleOwner) {
             latestOrderDetail = it
             manageLatestOrder()
         }
 
         viewModel.menuList.observe(viewLifecycleOwner) {
-            val kamuDaPopup = KamuDaPopup(
-                "Success",
-                "Successfully loaded the menu list",
-                "",
-                "Close",
-                1
-            )
-            val dialogFragment = mainActivity.showErrorPopup(kamuDaPopup).apply {
-                setNegativeActionListener {
-                    adapter.submitList(it)
-                }
-            }
-            dialogFragment.show(childFragmentManager, "custom_dialog")
-
+            adapter.submitList(it)
         }
 
         viewModel.showLoader.observe(viewLifecycleOwner) {
             mainActivity.showProgress(it)
         }
+
+        viewModel.showErrorPopup.observe(viewLifecycleOwner) {
+            showErrorPopup(it)
+        }
     }
 
+    /***
+     * Make a phone call
+     */
+    private fun makePhoneCall() {
 
+        val phoneNumber = kamuDaSecurePreference.getFoodHouseHotline(requireContext())
+
+        // Check for CALL_PHONE permission
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                permission.CALL_PHONE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Request the permission
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(permission.CALL_PHONE),
+                REQUEST_CALL_PERMISSION
+            )
+        } else {
+            // Permission is granted, make the phone call
+            initiatePhoneCall(phoneNumber)
+        }
+    }
+
+    private fun initiatePhoneCall(phoneNumber: String) {
+        val callIntent = Intent(Intent.ACTION_CALL)
+        callIntent.data = Uri.parse("tel:$phoneNumber")
+
+        try {
+            startActivity(callIntent)
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUEST_CALL_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, make the phone call
+                makePhoneCall()
+            } else {
+                // Permission denied, notify the user
+                Toast.makeText(
+                    requireContext(),
+                    "Permission denied. Can't make a call.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    /***
+     * Manage the latest order of tthe customer
+     */
     private fun manageLatestOrder() {
         if (latestOrderDetail == null) {
             binding.lytLatestOrderLoading.visibility = GONE
@@ -219,6 +280,10 @@ class FoodHouseFragment : Fragment() {
         super.onResume()
         context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
             ?.let { viewModel.getLatestOrderOfCustomer(it) }
+    }
+
+    private fun showErrorPopup(kamuDaPopup: KamuDaPopup) {
+        mainActivity.showErrorPopup(kamuDaPopup).show(childFragmentManager, "custom_dialog")
     }
 
     companion object {

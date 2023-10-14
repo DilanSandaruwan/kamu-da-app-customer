@@ -1,13 +1,13 @@
 package com.dilan.kamuda.customerapp.viewmodels.foodhouse
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +31,10 @@ class FoodHouseViewModel @Inject constructor(
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean> = _showLoader
 
+    private val _showErrorPopup = MutableLiveData<KamuDaPopup>()
+    val showErrorPopup: LiveData<KamuDaPopup> = _showErrorPopup
+
+
     fun getMenuListForAll() {
         _showLoader.value = true
         viewModelScope.launch {
@@ -38,19 +42,24 @@ class FoodHouseViewModel @Inject constructor(
             when (val res = mainRepository.getMenuListForMealFromDataSource()) {
                 is ApiState.Success -> {
                     _showLoader.postValue(false)
-                    Log.e("Doggy", "getMenuListForAll: ${res.data.get(0)}")
                     _menuList.postValue(res.data ?: emptyList())
                 }
 
                 is ApiState.Failure -> {
+                    val kamuDaPopup = KamuDaPopup(
+                        "Error",
+                        "Connection Failed. Try Again!",
+                        "",
+                        "Close",
+                        2
+                    )
+                    _showErrorPopup.postValue(kamuDaPopup)
                     _showLoader.postValue(false)
-                    Log.e("Doggy", "getMenuListForAll: ${res.msg}")
                     _menuList.postValue(emptyList())
                 }
 
                 is ApiState.Loading -> {
                     _showLoader.postValue(true)
-                    Log.e("Doggy", "getMenuListForAll: ${res.toString()}")
                 }
             }
 

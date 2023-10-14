@@ -1,7 +1,6 @@
 package com.dilan.kamuda.customerapp.views.fragments.order
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -35,10 +34,6 @@ class ViewOrderFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.e(
-            "DILAN",
-            "onResume: aayeth ${kamuDaSecurePreference.isLoadMyOrders(requireContext())}",
-        )
         if (kamuDaSecurePreference.isLoadMyOrders(requireContext())) {
             kamuDaSecurePreference.setLoadMyOrders(requireContext(), false)
             viewModel.getOrdersListOfCustomer(

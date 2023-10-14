@@ -9,7 +9,7 @@ import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.fragment.app.DialogFragment
 import com.dilan.kamuda.customerapp.R
 
-class ResponseHandlingDialogFragment:DialogFragment() {
+class ResponseHandlingDialogFragment : DialogFragment() {
     companion object {
         private const val ARG_TITLE = "title"
         private const val ARG_MESSAGE = "message"
@@ -24,7 +24,7 @@ class ResponseHandlingDialogFragment:DialogFragment() {
             positiveButtonText: String = "OK",
             negativeButtonText: String? = null,
             neutralButtonText: String? = null,
-            type:Int,
+            type: Int,
         ): ResponseHandlingDialogFragment {
             val fragment = ResponseHandlingDialogFragment()
             val args = Bundle().apply {
@@ -33,12 +33,13 @@ class ResponseHandlingDialogFragment:DialogFragment() {
                 putString(ARG_POSITIVE_BUTTON_TEXT, positiveButtonText)
                 putString(ARG_NEGATIVE_BUTTON_TEXT, negativeButtonText)
                 putString(ARG_NEUTRAL_BUTTON_TEXT, neutralButtonText)
-                putInt(ARG_TYPE,type)
+                putInt(ARG_TYPE, type)
             }
             fragment.arguments = args
             return fragment
         }
     }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val title = requireArguments().getString(ARG_TITLE, "")
         val message = requireArguments().getString(ARG_MESSAGE, "")
@@ -47,11 +48,26 @@ class ResponseHandlingDialogFragment:DialogFragment() {
         val inflater = requireActivity().layoutInflater
         val customView = inflater.inflate(R.layout.dialog_layout_response_handling, null)
 
-        when(type){
+        when (type) {
 
-            0 -> {customView.findViewById<ImageView>(R.id.ivLogo).setImageDrawable(getDrawable(requireContext(),R.drawable.ic_info))}
-            1 -> {customView.findViewById<ImageView>(R.id.ivLogo).setImageDrawable(getDrawable(requireContext(),R.drawable.ic_check_circle_green_24dp))}
-            2 -> {customView.findViewById<ImageView>(R.id.ivLogo).setImageDrawable(getDrawable(requireContext(),R.drawable.ic_close))}
+            0 -> {
+                customView.findViewById<ImageView>(R.id.ivLogo)
+                    .setImageDrawable(getDrawable(requireContext(), R.drawable.ic_info_24dp))
+            }
+
+            1 -> {
+                customView.findViewById<ImageView>(R.id.ivLogo).setImageDrawable(
+                    getDrawable(
+                        requireContext(),
+                        R.drawable.ic_check_circle_green_24dp
+                    )
+                )
+            }
+
+            2 -> {
+                customView.findViewById<ImageView>(R.id.ivLogo)
+                    .setImageDrawable(getDrawable(requireContext(), R.drawable.ic_cancel_24dp))
+            }
         }
         customView.findViewById<TextView>(R.id.tvTitle).text = title
         customView.findViewById<TextView>(R.id.tvMessage).text = message

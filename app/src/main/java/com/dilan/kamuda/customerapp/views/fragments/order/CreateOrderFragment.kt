@@ -1,7 +1,6 @@
 package com.dilan.kamuda.customerapp.views.fragments.order
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +34,6 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
 
     override fun onResume() {
         super.onResume()
-        Log.e("DILAN", "onResume: aayeth")
         if (kamuDaSecurePreference.isLoadMenuForOrders(requireContext())) {
             kamuDaSecurePreference.setLoadMenuForOrders(requireContext(), false)
             viewModel.getMenuListForMeal()
