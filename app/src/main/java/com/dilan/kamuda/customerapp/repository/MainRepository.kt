@@ -81,24 +81,32 @@ class MainRepository @Inject constructor(
         }
     }
 
-    suspend fun getFoodHouseDetailsFromDataSource(): FoodHouse? {
+    suspend fun getFoodHouseDetailsFromDataSource(): ApiState<FoodHouse?> {
         return withContext(Dispatchers.IO) {
             return@withContext getFoodHouseDetailsFromRemoteSource()
         }
     }
 
-    private suspend fun getFoodHouseDetailsFromRemoteSource(): FoodHouse? {
-        val response = onBoardingApiService.getFoodHouse()
-        if (response.isSuccessful) {
-            return response.body()
+    private suspend fun getFoodHouseDetailsFromRemoteSource(): ApiState<FoodHouse?> {
+        return try {
+            val response = onBoardingApiService.getFoodHouse()
+            if (response.isSuccessful) {
+                ApiState.Success(response.body())
+            } else {
+                ApiState.Failure("Something went wrong whe retrieving food house detauls")
+            }
+        } catch (exception: Exception) {
+            ApiState.Failure(exception.message.toString())
         }
-        return null
     }
 
     /***
      * UPDATE the order status
      */
-    suspend fun updateOrderByIdWithStatusOnDataSource(orderId: Int, status: String): ApiState<OrderDetail?> {
+    suspend fun updateOrderByIdWithStatusOnDataSource(
+        orderId: Int,
+        status: String
+    ): ApiState<OrderDetail?> {
         return withContext(Dispatchers.IO) {
             return@withContext (updateOrderByIdWithStatusOnRemoteSource(orderId, status))
         }
@@ -115,7 +123,7 @@ class MainRepository @Inject constructor(
             } else {
                 ApiState.Failure(response.errorBody().toString())
             }
-        } catch (exception:Exception){
+        } catch (exception: Exception) {
             ApiState.Failure(exception.message.toString())
         }
     }

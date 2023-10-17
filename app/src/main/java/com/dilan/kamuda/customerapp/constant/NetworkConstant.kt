@@ -1,7 +1,6 @@
 package com.dilan.kamuda.customerapp.constant
 
 import com.dilan.kamuda.customerapp.mysecret.dongo_url
-import com.dilan.kamuda.customerapp.mysecret.route_url
 
 object NetworkConstant {
 
@@ -16,7 +15,7 @@ object NetworkConstant {
     const val ENDPOINT_VERIFY_OTP = "verify/otp"
 
     // Endpoint for food-house
-    const val ENDPOINT_FOODHOUSE = "foodhouse/for_customer"
+    const val ENDPOINT_FOODHOUSE = "food_house/to_customer"
 
     // Endpoints for menu
     const val ENDPOINT_MENU = "menu/all"

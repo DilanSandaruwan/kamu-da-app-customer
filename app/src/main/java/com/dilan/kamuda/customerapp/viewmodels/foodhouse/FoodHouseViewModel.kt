@@ -52,13 +52,17 @@ class FoodHouseViewModel @Inject constructor(
             when (val res = mainRepository.getMenuListForMealFromDataSource()) {
                 is ApiState.Success -> {
                     _showLoader.postValue(false)
-                    _menuList.postValue(res.data ?: emptyList())
+                    _menuList.postValue(res.data!!)
                     _successfulRetrieve.postValue(true)
                 }
 
                 is ApiState.Failure -> {
                     _showLoader.postValue(false)
                     _showErrorPage.postValue(true)
+                }
+
+                is ApiState.Loading -> {
+
                 }
             }
 

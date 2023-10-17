@@ -19,58 +19,47 @@ class MainActivityViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private lateinit var food_house_details: FoodHouse
+    private val _foodHouseDetail = MutableLiveData<FoodHouse?>()
+    val foodHouseDetail: LiveData<FoodHouse?>
+        get() = _foodHouseDetail
+
     private val _ordersList = MutableLiveData<List<OrderDetail>>()
     val ordersList: LiveData<List<OrderDetail>>
         get() = _ordersList
 
-    private val _latestOrder = MutableLiveData<OrderDetail?>()
-    val latestOrder: LiveData<OrderDetail?>
-        get() = _latestOrder
-
-
     private val _showLoader = MutableLiveData<Boolean>()
     val showLoader: LiveData<Boolean> = _showLoader
 
-    private fun getFoodHouseDetails() {
-        viewModelScope.launch {
-            val foodhouse = mainRepository.getFoodHouseDetailsFromDataSource()
-            if (foodhouse == null) {
-                //TODO(Show an error message to Try again shortly)
-            } else {
-                food_house_details = foodhouse
-            }
-        }
-    }
+    private val _showErrorPage = MutableLiveData<Boolean>()
+    val showErrorPage: LiveData<Boolean> = _showErrorPage
 
-    fun getLatestOrderOfCustomer(custId: Int) {
+
+    fun getFoodHouseDetails() {
+        //_showErrorPage.value = false
+        //_showLoader.value = true
         viewModelScope.launch {
-            _showLoader.postValue(true)
-            val res = mainRepository.getOrderListFromDataSource(custId)
+            val res = mainRepository.getFoodHouseDetailsFromDataSource()
+
             when (res) {
                 is ApiState.Success -> {
-                    _showLoader.postValue(false)
-                    if (res.data != null) {
-                        _latestOrder.postValue(res.data.maxByOrNull {
-                            it.id
-                        })
-                    } else {
-                        _latestOrder.postValue(null)
-                    }
+                    _foodHouseDetail.postValue(res.data!!)
+                    //_showLoader.postValue(false)
                 }
 
                 is ApiState.Failure -> {
-                    _showLoader.postValue(false)
+                    _foodHouseDetail.postValue(null)
+                    //_showLoader.postValue(false)
+                    //_showErrorPage.postValue(true)
                 }
 
                 is ApiState.Loading -> {
-                    _showLoader.postValue(true)
+
                 }
             }
         }
     }
 
     init {
-        //getFoodHouseDetails()
+
     }
 }
