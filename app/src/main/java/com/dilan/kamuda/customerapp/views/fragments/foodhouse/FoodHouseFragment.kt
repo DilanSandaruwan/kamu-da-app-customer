@@ -22,16 +22,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dilan.kamuda.customerapp.ActBase.Companion.kamuDaSecurePreference
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentFoodHouseBinding
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
-import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.foodhouse.FoodHouseViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.ViewAllMealsAdapter
 import com.dilan.kamuda.customerapp.views.adapters.ViewOrderedItemsAdapter
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.divider.MaterialDivider
 import com.google.android.material.textview.MaterialTextView
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,11 +55,15 @@ class FoodHouseFragment : Fragment() {
         mainActivity = requireActivity() as MainActivity
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getMenuListForAll()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentFoodHouseBinding.inflate(layoutInflater, container, false)
         viewModel = ViewModelProvider(requireActivity())[FoodHouseViewModel::class.java]
         binding.foodHouseVM = viewModel
@@ -78,6 +83,13 @@ class FoodHouseFragment : Fragment() {
 
             }
         })
+
+        binding.lytCommonErrorScreenIncluded.findViewById<MaterialButton>(R.id.mbtnCommonErrorScreen)
+            .setOnClickListener {
+                mainActivity.binding.navView.visibility = VISIBLE
+                viewModel.getMenuListForAll()
+                binding.lytCommonErrorScreenIncluded.visibility = GONE
+            }
 
         binding.rvMeals.also {
             it.layoutManager = _layoutManager
@@ -103,6 +115,19 @@ class FoodHouseFragment : Fragment() {
 
         viewModel.showErrorPopup.observe(viewLifecycleOwner) {
             showErrorPopup(it)
+        }
+
+        viewModel.showErrorPage.observe(viewLifecycleOwner) {
+            if (it) {
+                showCommonErrorScreen()
+            }
+        }
+
+        viewModel.successfulRetrieve.observe(viewLifecycleOwner) { isSuccessful ->
+            if (isSuccessful) {
+                context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
+                    ?.let { viewModel.getLatestOrderOfCustomer(it) }
+            }
         }
     }
 
@@ -276,17 +301,12 @@ class FoodHouseFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
-            ?.let { viewModel.getLatestOrderOfCustomer(it) }
-    }
-
     private fun showErrorPopup(kamuDaPopup: KamuDaPopup) {
         mainActivity.showErrorPopup(kamuDaPopup).show(childFragmentManager, "custom_dialog")
     }
 
-    companion object {
-        var kamuDaSecurePreference = KamuDaSecurePreference()
+    private fun showCommonErrorScreen() {
+        mainActivity.binding.navView.visibility = GONE
+        binding.lytCommonErrorScreenIncluded.visibility = VISIBLE
     }
 }

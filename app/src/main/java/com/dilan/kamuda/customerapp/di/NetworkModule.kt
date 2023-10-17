@@ -4,7 +4,6 @@ import com.dilan.kamuda.customerapp.constant.NetworkConstant.BASE_URL
 import com.dilan.kamuda.customerapp.network.OnBoardingApiService
 import com.dilan.kamuda.customerapp.network.OrderApiService
 import com.dilan.kamuda.customerapp.repository.MainRepository
-import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -89,12 +88,6 @@ object NetworkModule {
         orderApiService: OrderApiService
     ): MainRepository {
         return MainRepository(onBoardingApiService, orderApiService)
-    }
-
-    @Singleton
-    @Provides
-    fun provideKamuDaSecurePreference(): KamuDaSecurePreference {
-        return KamuDaSecurePreference()
     }
 
 }

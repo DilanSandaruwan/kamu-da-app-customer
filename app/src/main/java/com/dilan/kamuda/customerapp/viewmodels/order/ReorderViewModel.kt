@@ -20,7 +20,7 @@ import javax.inject.Inject
 class ReorderViewModel @Inject constructor(
     private val mainRepository: MainRepository,
     application: Application
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
     private val _menuList = MutableLiveData<List<OrderItemIntermediate>>()
     val menuList: LiveData<List<OrderItemIntermediate>>
         get() = _menuList
@@ -121,14 +121,14 @@ class ReorderViewModel @Inject constructor(
         viewModelScope.launch {
             _showLoader.postValue(true)
             val res = mainRepository.placeOrderInDataSource(myOrder)
-            when(res){
+            when (res) {
                 is ApiState.Success -> {
                     _showLoader.postValue(false)
                     if (res.data != null) {
-                        //TODO("show success message")
                         _savedSuccessfully.postValue(true)
                     }
                 }
+
                 is ApiState.Failure -> {
                     val kamuDaPopup = KamuDaPopup(
                         "Error",
@@ -141,6 +141,7 @@ class ReorderViewModel @Inject constructor(
                     _showLoader.postValue(false)
                     _resetList.postValue(true)
                 }
+
                 is ApiState.Loading -> {
                     _showLoader.postValue(true)
                 }

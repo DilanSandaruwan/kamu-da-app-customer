@@ -34,32 +34,31 @@ class FoodHouseViewModel @Inject constructor(
     private val _showErrorPopup = MutableLiveData<KamuDaPopup>()
     val showErrorPopup: LiveData<KamuDaPopup> = _showErrorPopup
 
+    private val _showErrorPage = MutableLiveData<Boolean>()
+    val showErrorPage: LiveData<Boolean> = _showErrorPage
+
+    private val _successfulRetrieve = MutableLiveData<Boolean>()
+    val successfulRetrieve: LiveData<Boolean> = _successfulRetrieve
+
 
     fun getMenuListForAll() {
+
+        _showErrorPage.value = false
         _showLoader.value = true
+        _successfulRetrieve.value = false
+
         viewModelScope.launch {
 
             when (val res = mainRepository.getMenuListForMealFromDataSource()) {
                 is ApiState.Success -> {
                     _showLoader.postValue(false)
                     _menuList.postValue(res.data ?: emptyList())
+                    _successfulRetrieve.postValue(true)
                 }
 
                 is ApiState.Failure -> {
-                    val kamuDaPopup = KamuDaPopup(
-                        "Error",
-                        "Connection Failed. Try Again!",
-                        "",
-                        "Close",
-                        2
-                    )
-                    _showErrorPopup.postValue(kamuDaPopup)
                     _showLoader.postValue(false)
-                    _menuList.postValue(emptyList())
-                }
-
-                is ApiState.Loading -> {
-                    _showLoader.postValue(true)
+                    _showErrorPage.postValue(true)
                 }
             }
 
@@ -67,12 +66,14 @@ class FoodHouseViewModel @Inject constructor(
     }
 
     fun getLatestOrderOfCustomer(custId: Int) {
+
+        _showErrorPage.value = false
+
         viewModelScope.launch {
-            //_showLoader.postValue(true)
-            val res = mainRepository.getOrderListFromDataSource(custId)
-            when (res) {
+
+            when (val res = mainRepository.getOrderListFromDataSource(custId)) {
                 is ApiState.Success -> {
-                    // _showLoader.postValue(false)
+                    _showLoader.postValue(false)
                     if (res.data != null) {
                         _latestOrder.postValue(res.data.maxByOrNull {
                             it.id
@@ -83,17 +84,13 @@ class FoodHouseViewModel @Inject constructor(
                 }
 
                 is ApiState.Failure -> {
-                    //_showLoader.postValue(false)
+                    _showErrorPage.postValue(true)
                 }
 
                 is ApiState.Loading -> {
-                    //_showLoader.postValue(true)
+
                 }
             }
         }
-    }
-
-    init {
-        getMenuListForAll()
     }
 }

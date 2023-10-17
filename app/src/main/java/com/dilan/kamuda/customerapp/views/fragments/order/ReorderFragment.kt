@@ -10,6 +10,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dilan.kamuda.customerapp.ActBase.Companion.kamuDaSecurePreference
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentReorderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
@@ -17,7 +18,6 @@ import com.dilan.kamuda.customerapp.model.order.OrderItem
 import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
 import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.util.CustomDialogFragment
-import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.order.ReorderViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.ReorderAdapter
@@ -134,11 +134,11 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
 
         viewModel.savedSuccessfully.observe(viewLifecycleOwner) {
             if (it) {
-                CreateOrderFragment.kamuDaSecurePreference.setLoadMenuForOrders(
+                kamuDaSecurePreference.setLoadMenuForOrders(
                     requireContext(),
                     true
                 )
-                CreateOrderFragment.kamuDaSecurePreference.setLoadMyOrders(requireContext(), true)
+                kamuDaSecurePreference.setLoadMyOrders(requireContext(), true)
                 val kamuDaPopup = KamuDaPopup(
                     "Success",
                     "Successfully saved the order",
@@ -248,14 +248,10 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
     }
 
     fun goToViewOrderFromReorder() {
-        ViewOrderFragment.kamuDaSecurePreference.setLoadMyOrders(requireContext(),true)
+        kamuDaSecurePreference.setLoadMyOrders(requireContext(), true)
         val action = ReorderFragmentDirections.actionReorderFragmentToViewOrderFragment2()
         view?.findNavController()?.popBackStack(R.id.reorderFragment, false)
         view?.findNavController()?.navigate(action)
 
-    }
-
-    companion object {
-        var kamuDaSecurePreference = KamuDaSecurePreference()
     }
 }

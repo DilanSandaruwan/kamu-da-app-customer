@@ -9,7 +9,6 @@ import com.dilan.kamuda.customerapp.model.foodhouse.FoodHouse
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
-import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +16,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
     private val mainRepository: MainRepository,
-    private val kamuDaSecurePreference: KamuDaSecurePreference,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -73,6 +71,6 @@ class MainActivityViewModel @Inject constructor(
     }
 
     init {
-        getFoodHouseDetails()
+        //getFoodHouseDetails()
     }
 }

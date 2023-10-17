@@ -55,7 +55,7 @@ class ViewOrderViewModel @Inject constructor(
                 is ApiState.Failure -> {
                     val kamuDaPopup = KamuDaPopup(
                         "Error",
-                        res.msg,
+                        "Connection Failed. Try Again!",
                         "",
                         "Close",
                         2

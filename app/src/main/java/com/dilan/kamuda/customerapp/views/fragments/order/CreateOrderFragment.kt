@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dilan.kamuda.customerapp.ActBase.Companion.kamuDaSecurePreference
 import com.dilan.kamuda.customerapp.databinding.FragmentCreateOrderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItem
@@ -209,10 +210,6 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
 
     private fun showErrorPopup(kamuDaPopup: KamuDaPopup) {
         mainActivity.showErrorPopup(kamuDaPopup).show(childFragmentManager, "custom_dialog")
-    }
-
-    companion object {
-        var kamuDaSecurePreference = KamuDaSecurePreference()
     }
 
 }

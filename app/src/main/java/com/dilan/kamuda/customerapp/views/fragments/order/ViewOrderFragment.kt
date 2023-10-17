@@ -13,11 +13,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dilan.kamuda.customerapp.ActBase.Companion.kamuDaSecurePreference
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.FragmentViewOrderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
-import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.util.ResponseHandlingDialogFragment
 import com.dilan.kamuda.customerapp.viewmodels.order.ViewOrderViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
@@ -187,9 +187,5 @@ class ViewOrderFragment : Fragment() {
         )
         view?.findNavController()?.navigate(action)
 
-    }
-
-    companion object {
-        var kamuDaSecurePreference = KamuDaSecurePreference()
     }
 }

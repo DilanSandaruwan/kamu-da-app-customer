@@ -197,6 +197,12 @@
             </RelativeLayout>
         </ScrollView>
 
+        <include
+            android:id="@+id/lytCommonErrorScreenIncluded"
+            layout="@layout/layout_common_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
     </RelativeLayout>
 </layout>
