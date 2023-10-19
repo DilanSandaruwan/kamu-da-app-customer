@@ -11,4 +11,7 @@
     <string name="place_order">Place Order</string>
     <string name="check_out">Check Out</string>
     <string name="something_went_wrong">Something went wrong loading this screen</string>
+    <string name="error_contact">"Must start with 0 \&amp; should contain 10 digits"</string>
+    <string name="invalid_login">"Invalid Login. Try Again!"</string>
+    <string name="valid_phone">9876543210</string>
 </resources>

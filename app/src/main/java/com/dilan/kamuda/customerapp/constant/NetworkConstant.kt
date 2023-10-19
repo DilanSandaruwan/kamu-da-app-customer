@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.constant
 
 import com.dilan.kamuda.customerapp.mysecret.dongo_url
+import com.dilan.kamuda.customerapp.mysecret.route_url
 
 object NetworkConstant {
 

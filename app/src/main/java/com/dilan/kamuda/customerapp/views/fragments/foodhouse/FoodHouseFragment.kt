@@ -110,6 +110,11 @@ class FoodHouseFragment : Fragment() {
         }
 
         viewModel.showLoader.observe(viewLifecycleOwner) {
+            if(it){
+                mainActivity.binding.navView.visibility = GONE
+            } else {
+                mainActivity.binding.navView.visibility = VISIBLE
+            }
             mainActivity.showProgress(it)
         }
 

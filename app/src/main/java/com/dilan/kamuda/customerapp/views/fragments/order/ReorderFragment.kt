@@ -160,6 +160,11 @@ class ReorderFragment : Fragment(), ReorderAdapter.CheckedItemListener,
         }
 
         viewModel.showLoader.observe(viewLifecycleOwner) {
+            if(it){
+                mainActivity.binding.navView.visibility = View.GONE
+            } else {
+                mainActivity.binding.navView.visibility = View.VISIBLE
+            }
             mainActivity.showProgress(it)
         }
 

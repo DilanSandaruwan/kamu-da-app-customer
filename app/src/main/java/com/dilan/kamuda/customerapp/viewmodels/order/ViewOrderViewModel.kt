@@ -37,7 +37,15 @@ class ViewOrderViewModel @Inject constructor(
     private val _showErrorPopup = MutableLiveData<KamuDaPopup>()
     val showErrorPopup: LiveData<KamuDaPopup> = _showErrorPopup
 
+    private val _showErrorPage = MutableLiveData<Boolean>()
+    val showErrorPage: LiveData<Boolean> = _showErrorPage
+
+    private val _successfulRetrieve = MutableLiveData<Boolean>()
+    val successfulRetrieve: LiveData<Boolean> = _successfulRetrieve
+
     fun getOrdersListOfCustomer(custId: Int) {
+        _showErrorPage.value = false
+        _successfulRetrieve.value = false
         viewModelScope.launch {
             _showLoader.postValue(true)
             when (val res = mainRepository.getOrderListFromDataSource(custId)) {
@@ -48,22 +56,16 @@ class ViewOrderViewModel @Inject constructor(
                     } else {
                         _ordersList.postValue(emptyList())
                     }
+                    _successfulRetrieve.postValue(true)
                 }
 
                 is ApiState.Failure -> {
-                    val kamuDaPopup = KamuDaPopup(
-                        "Error",
-                        "Connection Failed. Try Again!",
-                        "",
-                        "Close",
-                        2
-                    )
-                    _showErrorPopup.postValue(kamuDaPopup)
                     _showLoader.postValue(false)
+                    _showErrorPage.postValue(true)
                 }
 
                 is ApiState.Loading -> {
-                    _showLoader.postValue(true)
+
                 }
             }
         }
@@ -92,6 +94,6 @@ class ViewOrderViewModel @Inject constructor(
     }
 
     init {
-        //getOrdersListOfCustomer()
+
     }
 }

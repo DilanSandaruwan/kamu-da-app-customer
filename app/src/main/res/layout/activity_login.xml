@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:hint="Email Address"
+            android:hint="Mobile Number"
             android:visibility="invisible"
             app:hintTextColor="@color/yellow"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,7 +34,10 @@
             app:layout_constraintVertical_bias="0.765">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tvMobileNumber"
                 android:layout_width="match_parent"
+                android:digits="@string/valid_phone"
+                android:maxLength="10"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>

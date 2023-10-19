@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
-import android.view.View.NO_ID
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,6 +22,7 @@ import com.dilan.kamuda.customerapp.util.ResponseHandlingDialogFragment
 import com.dilan.kamuda.customerapp.viewmodels.order.ViewOrderViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.ViewAllOrdersAdapter
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,14 +35,7 @@ class ViewOrderFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (kamuDaSecurePreference.isLoadMyOrders(requireContext())) {
-            kamuDaSecurePreference.setLoadMyOrders(requireContext(), false)
-            viewModel.getOrdersListOfCustomer(
-                kamuDaSecurePreference.getCustomerID(requireContext()).toInt()
-            )
-        }
-//        context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
-//            ?.let { viewModel.getOrdersListOfCustomer(it) }
+        callToGetListOfAllOrders()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +75,6 @@ class ViewOrderFragment : Fragment() {
 
         })
 
-
         binding.rvViewOrderDetails.also {
             it.layoutManager = _layoutManager
             it.addItemDecoration(_dividerItemDecoration)
@@ -97,7 +90,11 @@ class ViewOrderFragment : Fragment() {
                 viewModel.pastOrdersList.value =
                     listOfOrders.filter { it.status != "pending" && it.status != "accepted" }
                 when (viewModel.currentlySelectedGroup) {
-                    "ongoing" -> adapter.submitList(viewModel.ongoingList.value)
+                    "ongoing" -> {
+                        adapter.submitList(viewModel.ongoingList.value)
+                        binding.toggleButton.check(binding.btnOngoingOrders.id)
+                    }
+
                     "past-orders" -> adapter.submitList(viewModel.pastOrdersList.value)
                     else -> adapter.submitList(viewModel.ongoingList.value)
                 }
@@ -132,6 +129,11 @@ class ViewOrderFragment : Fragment() {
         }
 
         viewModel.showLoader.observe(viewLifecycleOwner) {
+            if (it) {
+                mainActivity.binding.navView.visibility = GONE
+            } else {
+                mainActivity.binding.navView.visibility = VISIBLE
+            }
             mainActivity.showProgress(it)
         }
 
@@ -139,35 +141,54 @@ class ViewOrderFragment : Fragment() {
             showErrorPopup(it)
         }
 
+        viewModel.showErrorPage.observe(viewLifecycleOwner) {
+            if (it) {
+                showCommonErrorScreen()
+            }
+        }
+
+        viewModel.successfulRetrieve.observe(viewLifecycleOwner) { isSuccessful ->
+            if (isSuccessful) {
+                kamuDaSecurePreference.setLoadMyOrders(requireContext(), false)
+            }
+        }
+
+        binding.lytCommonErrorScreenIncluded.findViewById<MaterialButton>(R.id.mbtnCommonErrorScreen)
+            .setOnClickListener {
+                mainActivity.binding.navView.visibility = VISIBLE
+                callToGetListOfAllOrders()
+                binding.lytCommonErrorScreenIncluded.visibility = GONE
+            }
+
         binding.toggleButton.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
             if (isChecked) {
                 when (checkedId) {
                     binding.btnOngoingOrders.id -> {
                         viewModel.currentlySelectedGroup = "ongoing"
+                        setColorAsSelected(binding.btnOngoingOrders)
+                        setColorAsDeSelected(binding.btnPastOrders)
                         adapter.submitList(viewModel.ongoingList.value)
                     }
 
                     binding.btnPastOrders.id -> {
                         viewModel.currentlySelectedGroup = "past-orders"
+                        setColorAsSelected(binding.btnPastOrders)
+                        setColorAsDeSelected(binding.btnOngoingOrders)
                         adapter.submitList(viewModel.pastOrdersList.value)
                     }
                 }
-            } else {
-                if (toggleButton.checkedButtonId == NO_ID) {
-                    viewModel.currentlySelectedGroup = "ongoing"
-                    adapter.submitList(viewModel.ongoingList.value)
-                }
             }
         }
-        binding.btnOngoingOrders.setOnClickListener {
-            viewModel.currentlySelectedGroup = "ongoing"
-            adapter.submitList(viewModel.ongoingList.value)
-        }
+    }
 
-        binding.btnPastOrders.setOnClickListener {
-            viewModel.currentlySelectedGroup = "past-orders"
-            adapter.submitList(viewModel.pastOrdersList.value)
-        }
+    private fun setColorAsSelected(button: Button) {
+        button.setBackgroundColor(resources.getColor(R.color.aqua, resources.newTheme()))
+        button.setTextColor(resources.getColor(R.color.white, resources.newTheme()))
+    }
+
+    private fun setColorAsDeSelected(button: Button) {
+        button.setBackgroundColor(resources.getColor(R.color.white, resources.newTheme()))
+        button.setTextColor(resources.getColor(R.color.black, resources.newTheme()))
     }
 
     private fun showErrorPopup(kamuDaPopup: KamuDaPopup) {
@@ -187,5 +208,18 @@ class ViewOrderFragment : Fragment() {
         )
         view?.findNavController()?.navigate(action)
 
+    }
+
+    private fun showCommonErrorScreen() {
+        mainActivity.binding.navView.visibility = GONE
+        binding.lytCommonErrorScreenIncluded.visibility = VISIBLE
+    }
+
+    private fun callToGetListOfAllOrders() {
+        if (kamuDaSecurePreference.isLoadMyOrders(requireContext())) {
+            viewModel.getOrdersListOfCustomer(
+                kamuDaSecurePreference.getCustomerID(requireContext()).toInt()
+            )
+        }
     }
 }
