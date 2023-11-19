@@ -29,6 +29,7 @@ import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.viewmodels.foodhouse.FoodHouseViewModel
+import com.dilan.kamuda.customerapp.views.activities.LoginActivity
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.ViewAllMealsAdapter
 import com.dilan.kamuda.customerapp.views.adapters.ViewOrderedItemsAdapter
@@ -100,6 +101,10 @@ class FoodHouseFragment : Fragment() {
             makePhoneCall()
         }
 
+        binding.imageLogout.setOnClickListener {
+            logOutFromApp()
+        }
+
         viewModel.latestOrder.observe(viewLifecycleOwner) {
             latestOrderDetail = it
             manageLatestOrder()
@@ -110,7 +115,7 @@ class FoodHouseFragment : Fragment() {
         }
 
         viewModel.showLoader.observe(viewLifecycleOwner) {
-            if(it){
+            if (it) {
                 mainActivity.binding.navView.visibility = GONE
             } else {
                 mainActivity.binding.navView.visibility = VISIBLE
@@ -190,6 +195,13 @@ class FoodHouseFragment : Fragment() {
                 ).show()
             }
         }
+    }
+
+    private fun logOutFromApp() {
+        kamuDaSecurePreference.clearSharedPrefKeys(requireContext())
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     /***

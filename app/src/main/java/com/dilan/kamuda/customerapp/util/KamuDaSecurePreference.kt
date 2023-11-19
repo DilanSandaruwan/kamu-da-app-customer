@@ -93,6 +93,7 @@ class KamuDaSecurePreference {
         val editor = sharedPreferences.edit()
         editor.remove(LOAD_MY_ORDERS_KEY)
         editor.remove(LOAD_MENU_FOR_ORDERS_KEY)
+        editor.remove(IS_LOGGED_USER)
 
         editor.apply()
     }

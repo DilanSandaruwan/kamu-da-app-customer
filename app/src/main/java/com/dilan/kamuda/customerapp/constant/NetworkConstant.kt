@@ -2,12 +2,14 @@ package com.dilan.kamuda.customerapp.constant
 
 import com.dilan.kamuda.customerapp.mysecret.dongo_url
 import com.dilan.kamuda.customerapp.mysecret.route_url
+import com.dilan.kamuda.customerapp.mysecret.udevictory_url
 
 object NetworkConstant {
 
     //const val BASE_URL = mockapi_url
-    const val BASE_URL = dongo_url
+    //const val BASE_URL = dongo_url
     //const val BASE_URL = route_url
+    const val BASE_URL = udevictory_url
 
     // Endpoint for login
     const val ENDPOINT_LOGIN = "login"

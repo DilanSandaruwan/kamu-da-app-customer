@@ -28,11 +28,31 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/img_round_dishes_1" />
 
+            <!-- Logout Icon -->
+            <ImageView
+                android:id="@+id/imageLogout"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/ic_round_logout_48dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageLogout"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:text="Logout"
+                android:textColor="@color/white" />
+
             <!-- Call Icon -->
             <ImageView
                 android:id="@+id/imageCall"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="20dp"
