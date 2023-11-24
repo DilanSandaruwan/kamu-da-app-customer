@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.util
 
 import android.content.Context
+import com.dilan.kamuda.customerapp.mysecret.food_house_mobile
 
 class KamuDaSecurePreference {
     companion object {
@@ -37,7 +38,7 @@ class KamuDaSecurePreference {
     // Method to retrieve the hotline number from SharedPreferences
     fun getFoodHouseHotline(context: Context): String {
         val sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-        return sharedPreferences.getString(FOOD_HOUSE_HOTLINE_KEY, "0717891397") ?: "0717891397"
+        return sharedPreferences.getString(FOOD_HOUSE_HOTLINE_KEY, food_house_mobile) ?: food_house_mobile
     }
 
     // Method to update the customer ID in SharedPreferences

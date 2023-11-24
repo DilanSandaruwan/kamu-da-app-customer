@@ -14,4 +14,10 @@
     <string name="error_contact">"Must start with 0 \&amp; should contain 10 digits"</string>
     <string name="invalid_login">"Invalid Login. Try Again!"</string>
     <string name="valid_phone">9876543210</string>
+
+    <!--  currency  -->
+    <string name="lkr">LKR</string>
+    <string name="order_total_format">%s %s</string>
+
+    <string name="permission_denied_cannot_make_a_call">Permission denied. Can\'t make a call.</string>
 </resources>

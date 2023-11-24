@@ -190,7 +190,7 @@ class FoodHouseFragment : Fragment() {
                 // Permission denied, notify the user
                 Toast.makeText(
                     requireContext(),
-                    "Permission denied. Can't make a call.",
+                    getString(R.string.permission_denied_cannot_make_a_call),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -205,116 +205,84 @@ class FoodHouseFragment : Fragment() {
     }
 
     /***
-     * Manage the latest order of tthe customer
+     * Manage the latest order of the customer
      */
     private fun manageLatestOrder() {
-        if (latestOrderDetail == null) {
-            binding.lytLatestOrderLoading.visibility = GONE
-            binding.lytLatestOrderNot.visibility = VISIBLE
-            binding.lytLatestOrder.visibility = GONE
-        } else {
-            binding.lytLatestOrder.findViewById<LinearLayout>(R.id.lytBtnActions).visibility = GONE
-            binding.lytLatestOrderLoading.visibility = GONE
-            binding.lytLatestOrderNot.visibility = GONE
-            binding.lytLatestOrder.visibility = VISIBLE
+        latestOrderDetail?.let {
+            with(binding) {
+                lytLatestOrder.findViewById<LinearLayout>(R.id.lytBtnActions).visibility = GONE
+                lytLatestOrderLoading.visibility = GONE
+                lytLatestOrderNot.visibility = GONE
+                lytLatestOrder.visibility = VISIBLE
 
-            SimpleDateFormat("yyyy MMM dd").format(
-                SimpleDateFormat("yyyy-MM-dd").parse(
-                    latestOrderDetail!!.date
+                val orderDateTextView =
+                    lytLatestOrder.findViewById<MaterialTextView>(R.id.mtvOrderDate)
+                val orderTimeTextView =
+                    lytLatestOrder.findViewById<MaterialTextView>(R.id.mtvOrderTime)
+                val orderTotalTextView =
+                    lytLatestOrder.findViewById<MaterialTextView>(R.id.mtvOrderTotal)
+                val itemCountTextView =
+                    lytLatestOrder.findViewById<MaterialTextView>(R.id.mtvOrderedItemCount)
+                val orderStatusTextView = lytLatestOrder.findViewById<TextView>(R.id.tvOrderStatus)
+                val verticalDivider =
+                    lytLatestOrder.findViewById<MaterialDivider>(R.id.verticalDivider)
+                val recyclerView = lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems)
+                val arrowDownImageView = lytLatestOrder.findViewById<ImageView>(R.id.btnArrowDown)
+                val arrowUpImageView = lytLatestOrder.findViewById<ImageView>(R.id.btnArrowUp)
+
+                // Set up order details
+                SimpleDateFormat("yyyy-MM-dd").parse(it.date)?.let { parsedDate ->
+                    val formattedDate = SimpleDateFormat("yyyy MMM dd").format(parsedDate)
+                    orderDateTextView.text = formattedDate
+                }
+
+                orderTimeTextView.text = it.createdAt
+                orderTotalTextView.text = getString(
+                    R.string.order_total_format,
+                    getString(R.string.lkr),
+                    it.total.toString() ?: 0.0
                 )
-            )
-                .also {
-                    binding.lytLatestOrder.findViewById<MaterialTextView>(R.id.mtvOrderDate).text =
-                        it
-                }
-            binding.lytLatestOrder.findViewById<MaterialTextView>(R.id.mtvOrderTime).text =
-                latestOrderDetail!!.createdAt
-            binding.lytLatestOrder.findViewById<MaterialTextView>(R.id.mtvOrderTotal).text =
-                "LKR ${latestOrderDetail!!.total}"
-            binding.lytLatestOrder.findViewById<MaterialTextView>(R.id.mtvOrderedItemCount).text =
-                "${latestOrderDetail!!.items.size} Items"
-            binding.lytLatestOrder.findViewById<TextView>(R.id.tvOrderStatus).text =
-                "${latestOrderDetail!!.status.uppercase()}"
+                itemCountTextView.text =
+                    resources.getQuantityString(R.plurals.item_count, it.items.size, it.items.size)
+                orderStatusTextView.text = it.status.uppercase()
 
-            when (latestOrderDetail!!.status) {
-                "pending" -> {
-                    binding.lytLatestOrder.findViewById<MaterialDivider>(R.id.verticalDivider).dividerColor =
-                        ContextCompat.getColor(
-                            binding.lytLatestOrder.context,
-                            R.color.yellow
-                        )
-
+                // Set up vertical divider color based on order status
+                verticalDivider.dividerColor = when (it.status) {
+                    "pending" -> ContextCompat.getColor(root.context, R.color.yellow)
+                    "completed" -> ContextCompat.getColor(root.context, R.color.black)
+                    "rejected" -> ContextCompat.getColor(root.context, R.color.redish)
+                    "cancelled" -> ContextCompat.getColor(root.context, R.color.grey)
+                    else -> ContextCompat.getColor(root.context, R.color.white)
                 }
 
-                else -> {
-                    binding.lytLatestOrder.findViewById<MaterialDivider>(R.id.verticalDivider).dividerColor =
-                        ContextCompat.getColor(
-                            binding.lytLatestOrder.context,
-                            R.color.green
-                        )
-                }
-            }
-
-            when (latestOrderDetail!!.status) {
-                "completed" -> {
-                    binding.lytLatestOrder.findViewById<MaterialDivider>(R.id.verticalDivider).dividerColor =
-                        ContextCompat.getColor(
-                            binding.lytLatestOrder.context,
-                            R.color.black
-                        )
-                }
-
-                "rejected" -> {
-                    binding.lytLatestOrder.findViewById<MaterialDivider>(R.id.verticalDivider).dividerColor =
-                        ContextCompat.getColor(
-                            binding.lytLatestOrder.context,
-                            R.color.redish
-                        )
-                }
-
-                "cancelled" -> {
-                    binding.lytLatestOrder.findViewById<MaterialDivider>(R.id.verticalDivider).dividerColor =
-                        ContextCompat.getColor(
-                            binding.lytLatestOrder.context,
-                            R.color.grey
-                        )
-                }
-            }
-
-            // Set up child RecyclerView
-            val childAdapter = ViewOrderedItemsAdapter()
-            binding.lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems).layoutManager =
-                LinearLayoutManager(binding.lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems).context) // Set layout manager
-            binding.lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems)
-                .addItemDecoration(
+                // Set up child RecyclerView
+                val childAdapter = ViewOrderedItemsAdapter()
+                recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
+                recyclerView.addItemDecoration(
                     DividerItemDecoration(
-                        binding.lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems).context,
-                        (binding.lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems).layoutManager as LinearLayoutManager).orientation
+                        recyclerView.context,
+                        RecyclerView.VERTICAL
                     )
                 )
-            binding.lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems).adapter =
-                childAdapter
-            childAdapter.submitList(latestOrderDetail!!.items)
+                recyclerView.adapter = childAdapter
+                childAdapter.submitList(it.items)
 
-            binding.lytLatestOrder.findViewById<RelativeLayout>(R.id.lytBtnToggle)
-                .setOnClickListener {
-                    if (binding.lytLatestOrder.findViewById<ImageView>(R.id.btnArrowDown).visibility == VISIBLE) {
-                        binding.lytLatestOrder.findViewById<ImageView>(R.id.btnArrowDown).visibility =
-                            GONE
-                        binding.lytLatestOrder.findViewById<ImageView>(R.id.btnArrowUp).visibility =
-                            VISIBLE
-                        binding.lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems).visibility =
-                            VISIBLE
-                    } else {
-                        binding.lytLatestOrder.findViewById<ImageView>(R.id.btnArrowUp).visibility =
-                            GONE
-                        binding.lytLatestOrder.findViewById<ImageView>(R.id.btnArrowDown).visibility =
-                            VISIBLE
-                        binding.lytLatestOrder.findViewById<RecyclerView>(R.id.rvViewOrderItems).visibility =
-                            GONE
-                    }
+                // Set up click listener for toggle button
+                lytLatestOrder.findViewById<RelativeLayout>(R.id.lytBtnToggle).setOnClickListener {
+                    arrowDownImageView.visibility =
+                        if (arrowDownImageView.visibility == VISIBLE) GONE else VISIBLE
+                    arrowUpImageView.visibility =
+                        if (arrowUpImageView.visibility == VISIBLE) GONE else VISIBLE
+                    recyclerView.visibility =
+                        if (arrowDownImageView.visibility == VISIBLE) VISIBLE else GONE
                 }
-
+            }
+        } ?: run {
+            with(binding) {
+                lytLatestOrderLoading.visibility = GONE
+                lytLatestOrderNot.visibility = VISIBLE
+                lytLatestOrder.visibility = GONE
+            }
         }
     }
 

@@ -38,9 +38,8 @@ class MainActivityViewModel @Inject constructor(
         //_showErrorPage.value = false
         //_showLoader.value = true
         viewModelScope.launch {
-            val res = mainRepository.getFoodHouseDetailsFromDataSource()
 
-            when (res) {
+            when (val res = mainRepository.getFoodHouseDetailsFromDataSource()) {
                 is ApiState.Success -> {
                     _foodHouseDetail.postValue(res.data!!)
                     //_showLoader.postValue(false)

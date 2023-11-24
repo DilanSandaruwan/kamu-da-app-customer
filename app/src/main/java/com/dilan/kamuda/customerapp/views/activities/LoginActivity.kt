@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.dilan.kamuda.customerapp.R
 import com.dilan.kamuda.customerapp.databinding.ActivityLoginBinding
+import com.dilan.kamuda.customerapp.mysecret.login_mobile
 import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.LoginViewModel
 import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
@@ -54,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
 
     fun loginValidity() {
         if (validateMobile(binding.tvMobileNumber)) {
-            if(binding.tvMobileNumber.text.toString() == "0712345678"){
+            if(binding.tvMobileNumber.text.toString() == login_mobile){
                 kamuDaSecurePreference.setCustomerID(this, "12");
                 kamuDaSecurePreference.setUserLogged(this, true)
                 val intent = Intent(this@LoginActivity, MainActivity::class.java)

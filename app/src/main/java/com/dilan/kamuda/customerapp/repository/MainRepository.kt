@@ -93,7 +93,7 @@ class MainRepository @Inject constructor(
             if (response.isSuccessful) {
                 ApiState.Success(response.body())
             } else {
-                ApiState.Failure("Something went wrong whe retrieving food house detauls")
+                ApiState.Failure("Something went wrong when retrieving food house details")
             }
         } catch (exception: Exception) {
             ApiState.Failure(exception.message.toString())
