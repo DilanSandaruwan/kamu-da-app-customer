@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -29,7 +30,7 @@ object NetworkModule {
      */
     @Singleton
     @Provides
-    fun provideConverterFactory(): Converter.Factory{
+    fun provideConverterFactory(): Converter.Factory {
         return GsonConverterFactory.create()
     }
 
@@ -38,9 +39,12 @@ object NetworkModule {
      */
     @Singleton
     @Provides
-    fun provideHttpClient(): OkHttpClient{
-        val okHttpClient = OkHttpClient.Builder()
-        return okHttpClient.build()
+    fun provideHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build()
     }
 
     /**
@@ -54,9 +58,9 @@ object NetworkModule {
     @Provides
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
-        baseUrl:String,
+        baseUrl: String,
         converterFactory: Converter.Factory
-    ):Retrofit{
+    ): Retrofit {
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(converterFactory)
@@ -70,6 +74,7 @@ object NetworkModule {
     fun provideOnBoardingApiService(retrofit: Retrofit): OnBoardingApiService {
         return retrofit.create(OnBoardingApiService::class.java)
     }
+
     @Singleton
     @Provides
     fun provideOrderApiService(retrofit: Retrofit): OrderApiService {
@@ -78,8 +83,11 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideMainRepository(onBoardingApiService: OnBoardingApiService,orderApiService: OrderApiService): MainRepository {
-        return MainRepository(onBoardingApiService,orderApiService)
+    fun provideMainRepository(
+        onBoardingApiService: OnBoardingApiService,
+        orderApiService: OrderApiService
+    ): MainRepository {
+        return MainRepository(onBoardingApiService, orderApiService)
     }
 
 }

@@ -1,6 +1,7 @@
 package com.dilan.kamuda.customerapp.model.order
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 import java.util.Date
 
 data class OrderDetail(
@@ -11,4 +12,4 @@ data class OrderDetail(
     @SerializedName("status") val status: String,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("items") val items: List<OrderItem>,
-)
+):Serializable

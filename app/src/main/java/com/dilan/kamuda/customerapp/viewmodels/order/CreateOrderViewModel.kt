@@ -8,7 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.foodhouse.FoodMenu
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
-import com.dilan.kamuda.customerapp.model.order.OrderItem
+import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
+import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,12 +22,12 @@ class CreateOrderViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val _menuList = MutableLiveData<List<OrderItem>>()
-    val menuList: LiveData<List<OrderItem>>
+    private val _menuList = MutableLiveData<List<OrderItemIntermediate>>()
+    val menuList: LiveData<List<OrderItemIntermediate>>
         get() = _menuList
 
-    private val _checkedItems = MutableLiveData<List<OrderItem>>()
-    val checkedItems: LiveData<List<OrderItem>>
+    private val _checkedItems = MutableLiveData<List<OrderItemIntermediate>>()
+    val checkedItems: LiveData<List<OrderItemIntermediate>>
         get() = _checkedItems
 
     private val _emptyOrder = MutableLiveData<Boolean>(true)
@@ -36,52 +38,115 @@ class CreateOrderViewModel @Inject constructor(
     val totalAmount: LiveData<Boolean>
         get() = _totalAmount
 
+
+    private val _savedSuccessfully = MutableLiveData<Boolean>(false)
+    val savedSuccessfully: LiveData<Boolean>
+        get() = _savedSuccessfully
+
     private val _resetList = MutableLiveData<Boolean>(false)
     val resetList: LiveData<Boolean>
         get() = _resetList
 
+    private val _showLoader = MutableLiveData<Boolean>()
+    val showLoader: LiveData<Boolean> = _showLoader
 
-    fun getMenuListForMeal(meal: String) {
+    private val _showErrorPopup = MutableLiveData<KamuDaPopup>()
+    val showErrorPopup: LiveData<KamuDaPopup> = _showErrorPopup
+
+    fun getMenuListForMeal() {
         viewModelScope.launch {
 
-            var list = mainRepository.getMenuListForMealFromDataSource() ?: emptyList()
+            var res = mainRepository.getMenuListForMealFromDataSource()
+            when (res) {
+                is ApiState.Success -> {
+                    convertToOrderItemsIntermediate(res.data)
+                }
 
-            convertToOrderItems(list)
+                is ApiState.Failure -> {
+                    val kamuDaPopup = KamuDaPopup(
+                        "Error",
+                        "Failed to load the menu list",
+                        "",
+                        "Close",
+                        2
+                    )
+                    _showErrorPopup.postValue(kamuDaPopup)
+                    convertToOrderItemsIntermediate(emptyList())
+                }
+
+                is ApiState.Loading -> {
+
+                }
+            }
 
         }
     }
 
-    private fun convertToOrderItems(foodMenus: List<FoodMenu>) {
-        var list = foodMenus.map { foodMenu ->
-            OrderItem(
-                foodMenu.name,
-                foodMenu.price,
-                0
-            ) // Assuming quantity is 0 for each item
+    private fun convertToOrderItemsIntermediate(foodMenus: List<FoodMenu>) {
+
+        var modifiedResponseBody = mutableListOf<OrderItemIntermediate>()
+        var originalResponseBody = foodMenus
+        var bitmap: ByteArray?
+        originalResponseBody.let {
+            for (item in originalResponseBody) {
+
+                bitmap = if (item.image != null) {
+                    val imageData =
+                        android.util.Base64.decode(item.image, android.util.Base64.DEFAULT)
+                    imageData
+                    //BitmapFactory.decodeByteArray(imageData,0,imageData.size)
+                } else {
+                    null
+                }
+                modifiedResponseBody.add(
+                    OrderItemIntermediate(item.name, item.price, 0, bitmap)
+                )
+            }
         }
-        if (list.isEmpty()) {
-            _menuList.postValue(list)
+
+
+        if (modifiedResponseBody.isEmpty()) {
+            _menuList.postValue(modifiedResponseBody)
         } else {
-            _menuList.postValue(list)
+            _menuList.postValue(modifiedResponseBody)
         }
     }
 
-    fun setCheckedItemsList(updatedCheckedItems: MutableList<OrderItem>) {
+    fun setCheckedItemsList(updatedCheckedItems: MutableList<OrderItemIntermediate>) {
         _emptyOrder.value = updatedCheckedItems.size < 1
         _checkedItems.value = updatedCheckedItems
-    }
-
-    private fun placeOrder() {
-
     }
 
     fun saveData(myOrder: OrderDetail) {
         Log.e("Orders", "saveData: $myOrder")
         viewModelScope.launch {
             val res = mainRepository.placeOrderInDataSource(myOrder)
-            if(res!=null){
-                _resetList.postValue(true)
+
+            when (res) {
+                is ApiState.Success -> {
+                    _showLoader.postValue(false)
+                    if (res.data != null) {
+                        _savedSuccessfully.postValue(true)
+                    }
+                }
+
+                is ApiState.Failure -> {
+                    val kamuDaPopup = KamuDaPopup(
+                        "Error",
+                        "Failed to make the order",
+                        "",
+                        "Close",
+                        2
+                    )
+                    _showErrorPopup.postValue(kamuDaPopup)
+                    _showLoader.postValue(false)
+                }
+
+                is ApiState.Loading -> {
+                    _showLoader.postValue(true)
+                }
             }
+
         }
     }
 
@@ -90,6 +155,6 @@ class CreateOrderViewModel @Inject constructor(
     }
 
     init {
-        getMenuListForMeal("breakfast")
+        //getMenuListForMeal()
     }
 }

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/createOrderFragment">
+    app:startDestination="@id/foodHouseFragment2">
     <fragment
         android:id="@+id/foodHouseFragment2"
         android:name="com.dilan.kamuda.customerapp.views.fragments.foodhouse.FoodHouseFragment"
@@ -12,10 +12,25 @@
     <fragment
         android:id="@+id/viewOrderFragment2"
         android:name="com.dilan.kamuda.customerapp.views.fragments.order.ViewOrderFragment"
-        android:label="My Order" />
+        android:label="My Order">
+        <action
+            android:id="@+id/action_viewOrderFragment2_to_reorderFragment"
+            app:destination="@id/reorderFragment" />
+    </fragment>
     <fragment
         android:id="@+id/createOrderFragment"
         android:name="com.dilan.kamuda.customerapp.views.fragments.order.CreateOrderFragment"
         android:label="fragment_create_order"
         tools:layout="@layout/fragment_create_order" />
+    <fragment
+        android:id="@+id/reorderFragment"
+        android:name="com.dilan.kamuda.customerapp.views.fragments.order.ReorderFragment"
+        android:label="ReorderFragment" >
+        <argument
+            android:name="selectedOrderDetail"
+            app:argType="com.dilan.kamuda.customerapp.model.order.OrderDetail" />
+        <action
+            android:id="@+id/action_reorderFragment_to_viewOrderFragment2"
+            app:destination="@id/viewOrderFragment2" />
+    </fragment>
 </navigation>

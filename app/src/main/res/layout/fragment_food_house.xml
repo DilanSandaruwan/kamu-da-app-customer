@@ -1,11 +1,228 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.fragments.foodhouse.FoodHouseFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO: Update blank fragment layout -->
+    <data>
 
+        <variable
+            name="foodHouseVM"
+            type="com.dilan.kamuda.customerapp.viewmodels.foodhouse.FoodHouseViewModel" />
+    </data>
 
-</RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/aqua"
+        android:orientation="vertical"
+        tools:context=".views.fragments.foodhouse.FoodHouseFragment">
+
+        <RelativeLayout
+            android:id="@+id/lytImageView"
+            android:layout_width="match_parent"
+            android:layout_height="270dp">
+            <!-- Restaurant Image -->
+            <ImageView
+                android:id="@+id/imageViewRestaurant"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_round_dishes_1" />
+
+            <!-- Logout Icon -->
+            <ImageView
+                android:id="@+id/imageLogout"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/ic_round_logout_48dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageLogout"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:text="Logout"
+                android:textColor="@color/white" />
+
+            <!-- Call Icon -->
+            <ImageView
+                android:id="@+id/imageCall"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:src="@drawable/ic_phone_orange" />
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/lytImageView"
+            android:background="@drawable/bg_top_curved_white"
+            android:fillViewport="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp">
+                <!-- Restaurant Name -->
+                <TextView
+                    android:id="@+id/textViewRestaurantName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:paddingStart="18sp"
+                    android:paddingTop="18sp"
+                    android:text="Helanka Foods"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <!-- Restaurant Address -->
+                <TextView
+                    android:id="@+id/textViewRestaurantAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/textViewRestaurantName"
+                    android:layout_marginStart="10dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="20/A, Arthur Lane, Dalugama, Kelaniya"
+                    android:textSize="14sp"
+                    android:textStyle="italic" />
+
+                <!-- Restaurant Description -->
+                <TextView
+                    android:id="@+id/textViewRestaurantDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/textViewRestaurantAddress"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="16dp"
+                    android:text="Description of the restaurant goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+                <!-- Menu Button -->
+                <Button
+                    android:id="@+id/buttonViewMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/textViewRestaurantDescription"
+                    android:layout_centerHorizontal="true"
+                    android:padding="12dp"
+                    android:text="View Menu"
+                    android:visibility="gone" />
+
+                <!-- Restaurant Name -->
+
+                <LinearLayout
+                    android:id="@+id/lyt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/buttonViewMenu"
+                    android:layout_margin="5dp"
+                    android:orientation="vertical"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp">
+
+                        <TextView
+                            android:id="@+id/tvOurMeals"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="8dp"
+                            android:text="Our Meals"
+                            android:textColor="@color/btn_dark_blue"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvMeals"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:padding="5dp" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/lblLatestOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/lyt"
+                    android:padding="16dp"
+                    android:text="Latest Order"
+                    android:textColor="@color/btn_dark_blue"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <include
+                    android:id="@+id/lytLatestOrder"
+                    layout="@layout/layout_order_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lblLatestOrder"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:visibility="gone" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/lytLatestOrderNot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/lblLatestOrder"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="Try your first order!"
+                        android:textSize="18sp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/lytLatestOrderLoading"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/lblLatestOrder"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="20dp"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="Loading.."
+                        android:textSize="18sp" />
+
+                </com.google.android.material.card.MaterialCardView>
+            </RelativeLayout>
+        </ScrollView>
+
+        <include
+            android:id="@+id/lytCommonErrorScreenIncluded"
+            layout="@layout/layout_common_error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+</layout>

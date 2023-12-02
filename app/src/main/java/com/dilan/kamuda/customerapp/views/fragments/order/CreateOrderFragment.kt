@@ -8,11 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dilan.kamuda.customerapp.ActBase.Companion.kamuDaSecurePreference
 import com.dilan.kamuda.customerapp.databinding.FragmentCreateOrderBinding
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
 import com.dilan.kamuda.customerapp.model.order.OrderItem
+import com.dilan.kamuda.customerapp.model.order.OrderItemIntermediate
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
 import com.dilan.kamuda.customerapp.util.CustomDialogFragment
+import com.dilan.kamuda.customerapp.util.KamuDaSecurePreference
 import com.dilan.kamuda.customerapp.viewmodels.order.CreateOrderViewModel
+import com.dilan.kamuda.customerapp.views.activities.main.MainActivity
 import com.dilan.kamuda.customerapp.views.adapters.CreateOrderAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -26,6 +31,22 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
     private lateinit var viewModel: CreateOrderViewModel
     private lateinit var binding: FragmentCreateOrderBinding
     private lateinit var adapter: CreateOrderAdapter
+    private lateinit var mainActivity: MainActivity
+
+    override fun onResume() {
+        super.onResume()
+        if (kamuDaSecurePreference.isLoadMenuForOrders(requireContext())) {
+            kamuDaSecurePreference.setLoadMenuForOrders(requireContext(), false)
+            viewModel.getMenuListForMeal()
+        }
+//        context?.let { kamuDaSecurePreference.getCustomerID(it).toInt() }
+//            ?.let { viewModel.getOrdersListOfCustomer(it) }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mainActivity = requireActivity() as MainActivity
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,10 +66,10 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         val _layoutManager = LinearLayoutManager(requireContext())
         val _dividerItemDecoration =
             DividerItemDecoration(requireContext(), _layoutManager.orientation)
-        adapter = CreateOrderAdapter(object :
+        adapter = CreateOrderAdapter(this, object :
             CreateOrderAdapter.OnItemClickListener {
 
-            override fun itemClick(item: OrderItem) {
+            override fun itemClick(item: OrderItemIntermediate) {
 
             }
         }, this, this)
@@ -81,10 +102,11 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         viewModel.checkedItems.observe(viewLifecycleOwner) { it ->
             if (it.size > 0) {
                 binding.tvTotal.text = it.sumOf { it.price * it.quantity }.toString()
+                binding.btnPlaceOrder.isEnabled = !it.any { it.quantity == 0 }
             } else {
                 binding.tvTotal.text = "0.00"
+                binding.btnPlaceOrder.isEnabled = false
             }
-            binding.btnPlaceOrder.isEnabled = !it.any { it.quantity == 0 }
             adapter.setCheckedItems(it)
         }
 
@@ -92,13 +114,46 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
             binding.btnPlaceOrder.isEnabled = !it
         }
 
-        viewModel.resetList.observe(viewLifecycleOwner){
+        viewModel.resetList.observe(viewLifecycleOwner) {
             resetOrder()
+        }
+
+        viewModel.savedSuccessfully.observe(viewLifecycleOwner) {
+            if (it) {
+                kamuDaSecurePreference.setLoadMenuForOrders(requireContext(), false)
+                kamuDaSecurePreference.setLoadMyOrders(requireContext(), true)
+                val kamuDaPopup = KamuDaPopup(
+                    "Success",
+                    "Successfully saved the order",
+                    "",
+                    "Close",
+                    1
+                )
+                val dialogFragment = mainActivity.showErrorPopup(kamuDaPopup).apply {
+                    setNegativeActionListener {
+                        viewModel.getMenuListForMeal()
+                    }
+                }
+                dialogFragment.show(childFragmentManager, "custom_dialog")
+            }
+        }
+
+        viewModel.showErrorPopup.observe(viewLifecycleOwner) {
+            showErrorPopup(it)
+        }
+
+        viewModel.showLoader.observe(viewLifecycleOwner) {
+            if(it){
+                mainActivity.binding.navView.visibility = View.GONE
+            } else {
+                mainActivity.binding.navView.visibility = View.VISIBLE
+            }
+            mainActivity.showProgress(it)
         }
 
     }
 
-    override fun onItemChecked(item: OrderItem, isChecked: Boolean) {
+    override fun onItemChecked(item: OrderItemIntermediate, isChecked: Boolean) {
         val updatedCheckedItems = viewModel.checkedItems.value?.toMutableList() ?: mutableListOf()
         if (isChecked) {
             if (!updatedCheckedItems.contains(item)) {
@@ -122,8 +177,10 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         }
     }
 
-    private fun setOrderDetails(checkedItems: List<OrderItem>) {
+    private fun setOrderDetails(checkedItems: List<OrderItemIntermediate>) {
         var mutableList = mutableListOf<OrderItem>()
+        val custId = KamuDaSecurePreference().getCustomerID(requireContext()).toInt()
+
         for (i in checkedItems) {
             mutableList.add(OrderItem(i.name, i.price, i.quantity))
         }
@@ -131,9 +188,9 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         val myOrder =
             OrderDetail(
                 -1,
-                12,
+                custId,
                 checkedItems.sumOf { it.price * it.quantity }.toDouble(),
-                "2023-09-16",
+                getThisDate(),
                 "pending",
                 getThisTime(),
                 list,
@@ -142,15 +199,22 @@ class CreateOrderFragment : Fragment(), CreateOrderAdapter.CheckedItemListener,
         viewModel.saveData(myOrder)
     }
 
-    private fun getThisTime():String{
-        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val currentDateAndTime = sdf.format(Calendar.getInstance().time)
-        return currentDateAndTime
+    private fun getThisTime(): String {
+        val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        return sdf.format(Calendar.getInstance().time)
     }
 
-    private fun resetOrder(){
+    private fun getThisDate(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(Calendar.getInstance().time)
+    }
+
+    private fun resetOrder() {
         viewModel.setCheckedItemsList(mutableListOf())
-        //viewModel.getMenuListForMeal("breakfast")
+    }
+
+    private fun showErrorPopup(kamuDaPopup: KamuDaPopup) {
+        mainActivity.showErrorPopup(kamuDaPopup).show(childFragmentManager, "custom_dialog")
     }
 
 }

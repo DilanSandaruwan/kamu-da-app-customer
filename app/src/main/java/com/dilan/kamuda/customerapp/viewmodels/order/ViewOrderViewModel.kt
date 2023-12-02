@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dilan.kamuda.customerapp.model.order.OrderDetail
+import com.dilan.kamuda.customerapp.model.specific.KamuDaPopup
+import com.dilan.kamuda.customerapp.network.utils.ApiState
 import com.dilan.kamuda.customerapp.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,38 +19,81 @@ class ViewOrderViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
+    var currentlySelectedGroup = "ongoing"
+    val ongoingList = MutableLiveData<List<OrderDetail>>()
+    val pastOrdersList = MutableLiveData<List<OrderDetail>>()
+
     private val _ordersList = MutableLiveData<List<OrderDetail>>()
     val ordersList: LiveData<List<OrderDetail>>
         get() = _ordersList
 
-    private fun getOrdersListOfCustomer(custId: Int) {
+    private val _objectHasUpdated = MutableLiveData<OrderDetail?>()
+    val objectHasUpdated: LiveData<OrderDetail?>
+        get() = _objectHasUpdated
+
+    private val _showLoader = MutableLiveData<Boolean>()
+    val showLoader: LiveData<Boolean> = _showLoader
+
+    private val _showErrorPopup = MutableLiveData<KamuDaPopup>()
+    val showErrorPopup: LiveData<KamuDaPopup> = _showErrorPopup
+
+    private val _showErrorPage = MutableLiveData<Boolean>()
+    val showErrorPage: LiveData<Boolean> = _showErrorPage
+
+    private val _successfulRetrieve = MutableLiveData<Boolean>()
+    val successfulRetrieve: LiveData<Boolean> = _successfulRetrieve
+
+    fun getOrdersListOfCustomer(custId: Int) {
+        _showErrorPage.value = false
+        _successfulRetrieve.value = false
         viewModelScope.launch {
-            _ordersList.postValue(mainRepository.getOrderListFromDataSource(custId))
+            _showLoader.postValue(true)
+            when (val res = mainRepository.getOrderListFromDataSource(custId)) {
+                is ApiState.Success -> {
+                    _showLoader.postValue(false)
+                    if (res.data != null) {
+                        _ordersList.postValue(res.data!!)
+                    } else {
+                        _ordersList.postValue(emptyList())
+                    }
+                    _successfulRetrieve.postValue(true)
+                }
+
+                is ApiState.Failure -> {
+                    _showLoader.postValue(false)
+                    _showErrorPage.postValue(true)
+                }
+
+                is ApiState.Loading -> {
+
+                }
+            }
         }
     }
 
-    private fun getOrdersList() {
+    fun updateOrderWithStatus(orderId: Int, status: String) {
+        viewModelScope.launch {
+            _showLoader.postValue(true)
+            val response = mainRepository.updateOrderByIdWithStatusOnDataSource(orderId, status)
+            when (response) {
+                is ApiState.Success -> {
+                    _showLoader.postValue(false)
+                    _objectHasUpdated.postValue(response.data)
+                }
 
-//        val orderItems = listOf(
-//            OrderItem( "Burger", 8.99,2 ),
-//            OrderItem( "Fries", 3.99,1 ),
-//            OrderItem("Soda", 1.99,3 ),
-//        )
-//
-//        val orderDetail = OrderDetail(
-//            orderId = 12345,
-//            createdAt = "2023-08-28T12:34:56Z",
-//            meal = "Lunch",
-//            status = "Processing",
-//            total = 20.96,
-//            items = orderItems
-//        )
-//
-//        _ordersList.value = listOf(orderDetail)
+                is ApiState.Failure -> {
+                    _objectHasUpdated.postValue(null)
+                    _showLoader.postValue(false)
+                }
 
+                is ApiState.Loading -> {
+                    _showLoader.postValue(true)
+                }
+            }
+        }
     }
 
     init {
-        getOrdersListOfCustomer(12)
+
     }
 }
